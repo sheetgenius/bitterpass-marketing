@@ -1,0 +1,476 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f3eee5;
+  --color-panel: #faf5eb;
+  --color-panel-strong: #ece4d2;
+  --color-line: #d4c8b1;
+  --color-line-strong: #b9a982;
+  --color-fg: #1a1722;
+  --color-muted: #6e6478;
+  --color-muted-strong: #41384c;
+  --color-accent: #5b3aa6;
+  --color-accent-dim: #422786;
+  --color-positive: #2d6c5c;
+  --color-warn: #b3523a;
+
+  --font-sans: "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif";
+  --font-mono: "IBM Plex Mono", "ui-monospace", "Menlo", "monospace";
+
+  --tracking-brand: 0.24em;
+}
+
+:root {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #0d0c10;
+    --color-panel: #131119;
+    --color-panel-strong: #1a1822;
+    --color-line: #2a2734;
+    --color-line-strong: #3f3a4f;
+    --color-fg: #ece6f5;
+    --color-muted: #8a829a;
+    --color-muted-strong: #cabfde;
+    --color-accent: #b69bff;
+    --color-accent-dim: #9b7aff;
+    --color-positive: #6bb39f;
+    --color-warn: #df8b6f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #0d0c10;
+  --color-panel: #131119;
+  --color-panel-strong: #1a1822;
+  --color-line: #2a2734;
+  --color-line-strong: #3f3a4f;
+  --color-fg: #ece6f5;
+  --color-muted: #8a829a;
+  --color-muted-strong: #cabfde;
+  --color-accent: #b69bff;
+  --color-accent-dim: #9b7aff;
+  --color-positive: #6bb39f;
+  --color-warn: #df8b6f;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+html {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(91, 58, 166, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 92%, rgba(45, 108, 92, 0.06), transparent 32%),
+    var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+:root[data-theme="dark"] html,
+html[data-theme="dark"] {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(155, 122, 255, 0.10), transparent 30%),
+    radial-gradient(circle at 88% 92%, rgba(107, 179, 159, 0.05), transparent 34%),
+    var(--color-bg);
+}
+
+body {
+  min-height: 100vh;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+a,
+button {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+button:hover,
+a:hover {
+  transform: translateY(-1px);
+}
+
+input,
+textarea,
+button {
+  border-radius: 0;
+}
+
+.hairline {
+  background: var(--color-line);
+  height: 1px;
+}
+
+.brand {
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-brand);
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.section-index {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--color-muted);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.gridlines {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
+  -webkit-mask-image: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.85), transparent 78%);
+}
+
+.hero-orb {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.hero-orb-a {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 32%, transparent) 0%, transparent 64%);
+}
+
+.hero-orb-b {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-positive) 22%, transparent) 0%, transparent 70%);
+}
+
+/* ================== Vault dial motif ==================
+   Concentric rings + a slow sweep + tumblers. Pure CSS,
+   reads as cryptographic, not skeuomorphic. */
+
+.vault-dial {
+  position: absolute;
+  right: -16vw;
+  top: -10vw;
+  width: min(80vw, 64rem);
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  opacity: 0.55;
+  filter: contrast(1.05);
+}
+
+.vault-dial__ring {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-fg) 8%, transparent);
+}
+
+.vault-dial__ring--outer {
+  inset: 4%;
+  border-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+.vault-dial__ring--mid {
+  inset: 14%;
+  border-color: color-mix(in srgb, var(--color-fg) 5%, transparent);
+  border-style: dashed;
+}
+
+.vault-dial__ring--inner {
+  inset: 24%;
+  border-color: color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.vault-dial__ring--core {
+  inset: 36%;
+  border-color: color-mix(in srgb, var(--color-fg) 10%, transparent);
+}
+
+.vault-dial__ring--seal {
+  inset: 44%;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 14%, transparent) 0%, transparent 78%);
+}
+
+/* clip-path ring decorations: open notches on outer + sweep */
+.vault-dial__ring--outer {
+  clip-path: polygon(
+    0% 6%, 96% 6%, 100% 10%, 100% 90%, 96% 94%, 50% 94%,
+    50% 100%, 48% 100%, 48% 94%, 4% 94%, 0 90%, 0 10%
+  );
+}
+
+.vault-dial__ring--inner {
+  clip-path: polygon(
+    50% 0, 100% 0, 100% 100%, 50% 100%, 50% 56%, 44% 56%, 44% 50%, 50% 50%
+  );
+}
+
+.vault-dial__sweep {
+  position: absolute;
+  inset: 14%;
+  border-radius: 9999px;
+  background:
+    conic-gradient(
+      from 220deg,
+      transparent 0deg,
+      color-mix(in srgb, var(--color-accent) 26%, transparent) 36deg,
+      transparent 96deg,
+      transparent 360deg
+    );
+  mask-image: radial-gradient(circle, transparent 56%, black 56%, black 64%, transparent 64%);
+  -webkit-mask-image: radial-gradient(circle, transparent 56%, black 56%, black 64%, transparent 64%);
+  opacity: 0.95;
+}
+
+/* tumblers: small ticks around the inner ring */
+.vault-dial__tumbler {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 11%;
+  background: color-mix(in srgb, var(--color-fg) 16%, transparent);
+  transform-origin: 0 0;
+}
+
+.vault-dial__tumbler::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: -3px;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-accent) 60%, transparent);
+}
+
+@media (max-width: 768px) {
+  .vault-dial {
+    width: 26rem;
+    right: -10rem;
+    top: -3rem;
+    opacity: 0.32;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vault-dial {
+    animation: dial-drift 22s ease-in-out infinite;
+  }
+  .vault-dial__sweep {
+    animation: sweep-rotate 14s linear infinite;
+  }
+  .vault-dial__ring--seal {
+    animation: seal-pulse 6s ease-in-out infinite;
+  }
+}
+
+@keyframes dial-drift {
+  0%,
+  100% {
+    transform: rotate(0deg) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: rotate(-1.5deg) translate3d(-0.3rem, 0.2rem, 0);
+  }
+}
+
+@keyframes sweep-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes seal-pulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ================== Inline glyphs ================== */
+
+.seal-stamp {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 50%, transparent);
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  color: var(--color-accent);
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-accent) 12%, transparent) 0%, transparent 70%);
+}
+
+.seal-stamp::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: 9999px;
+}
+
+/* ================== Cards / surfaces ================== */
+
+.card-line {
+  position: relative;
+}
+
+.card-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  width: 2.5rem;
+  background: var(--color-accent);
+}
+
+/* ================== Forms ================== */
+
+.field-input {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+  color: var(--color-fg);
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.field-input::placeholder {
+  color: color-mix(in srgb, var(--color-muted) 90%, transparent);
+}
+
+.field-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+/* ================== CTA buttons ================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--color-accent);
+  color: #fffaf2;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-dim);
+  border-color: var(--color-accent-dim);
+  color: #fffaf2;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-strong);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  color: var(--color-accent);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-strong);
+  border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+}
+
+.btn-outline:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+/* ================== Misc ================== */
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.25rem;
+  padding: 0.95rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+}
+
+.spec-row:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-line-strong) 60%, transparent);
+}
+
+.spec-row__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  align-self: start;
+  padding-top: 0.15rem;
+}
+
+.spec-row__body {
+  color: var(--color-muted-strong);
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+
+@media (max-width: 640px) {
+  .spec-row {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}
