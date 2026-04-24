@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'BitterPass — Credentials sealed by you, served to your agents',
+      title: 'BitterPass — Operator-approved credentials for agents',
       htmlAttrs: {
         lang: 'en',
       },
@@ -26,16 +26,23 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterPass is a zero-knowledge credential service for humans and the agents they trust. The server stores ciphertext. You hold the master secret. Every read is signed and audited.',
+            'BitterPass is a zero-knowledge credentials vault for operators running agents against real systems. Passkeys gate humans. Ed25519 identities gate runners. The service stores ciphertext, metadata, and audit.',
         },
-        { property: 'og:title', content: 'BitterPass — Credentials sealed by you, served to your agents' },
+        { property: 'og:title', content: 'BitterPass — Operator-approved credentials for agents' },
         {
           property: 'og:description',
           content:
-            'Zero-knowledge credentials for humans and runners. Sealed bundles per agent run, append-only audit, two-phase atomic writes.',
+            'A zero-knowledge credentials vault for operators replacing broad service accounts, copied env vars, and unauditable bot access.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bitterpass.com' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: 'BitterPass — Operator-approved credentials for agents' },
+        {
+          name: 'twitter:description',
+          content:
+            'A zero-knowledge credentials vault for operators replacing broad service accounts, copied env vars, and unauditable bot access.',
+        },
         { name: 'color-scheme', content: 'light dark' },
         { name: 'theme-color', content: '#f3eee5', media: '(prefers-color-scheme: light)' },
         { name: 'theme-color', content: '#0d0c10', media: '(prefers-color-scheme: dark)' },
