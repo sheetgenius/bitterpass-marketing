@@ -5,6 +5,12 @@ Marketing site for [bitterpass.com](https://bitterpass.com).
 Static Nuxt 4 + Tailwind 4 site, deployed to Radicchio (Cloudflare Worker
 edge).
 
+Do not make this repo the source of truth for local CLI onboarding. The
+canonical private-launch setup guide lives in the Bitter repo:
+<https://github.com/sheetgenius/bitter/blob/main/docs/guides/first-customer-setup.md>.
+Marketing copy should summarize the path and point customers toward the
+CLI-owned guide.
+
 ## Local development
 
 ```
