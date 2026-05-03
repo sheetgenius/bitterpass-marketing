@@ -224,12 +224,7 @@ onMounted(() => {
           <div class="mt-10 flex flex-wrap items-center gap-3">
             <a href="#access" class="btn-primary">Request access</a>
             <a href="#contract" class="btn-ghost">Read the contract &rarr;</a>
-            <a
-              href="https://github.com/sheetgenius/bitter/blob/main/docs/guides/first-customer-setup.md"
-              class="btn-outline"
-            >
-              CLI setup guide
-            </a>
+            <NuxtLink to="/cli-setup" class="btn-outline">CLI setup guide</NuxtLink>
           </div>
 
           <div class="mt-12 grid gap-4 md:grid-cols-3">
@@ -509,10 +504,8 @@ onMounted(() => {
         >
           <a href="https://app.bitterpass.com" class="transition hover:text-fg">Console</a>
           <a href="#spec" class="transition hover:text-fg">Spec</a>
-          <a
-            href="https://github.com/sheetgenius/bitter/blob/main/docs/guides/first-customer-setup.md"
-            class="transition hover:text-fg"
-          >CLI guide</a>
+          <NuxtLink to="/cli-setup" class="transition hover:text-fg">CLI setup</NuxtLink>
+          <a href="https://bitterdesk.com" class="transition hover:text-fg">Support</a>
           <a href="#access" class="transition hover:text-fg">Request access</a>
         </div>
       </div>
