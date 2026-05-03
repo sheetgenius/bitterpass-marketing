@@ -19,6 +19,13 @@ test("home page exposes the support link to bitterdesk.com", async ({ page }) =>
   await expect(supportLink).toBeVisible();
 });
 
+test("home page explains the post-request path", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText(/What happens next/i)).toBeVisible();
+  await expect(page.getByText(/Approved teams get the current console and CLI onboarding path/i)).toBeVisible();
+  await expect(page.getByText(/BitterDesk is the path for a missing invitation or a stalled first setup/i)).toBeVisible();
+});
+
 test("cli-setup page loads and shows the setup heading", async ({ page }) => {
   const response = await page.goto("/cli-setup");
   expect(response?.status()).toBe(200);

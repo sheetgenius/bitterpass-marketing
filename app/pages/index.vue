@@ -2,7 +2,7 @@
 useSeoMeta({
   title: 'BitterPass — Operator-approved credentials for agents',
   description:
-    'BitterPass is a zero-knowledge credentials vault for operators running agents against real systems. Passkeys gate humans. Ed25519 identities gate runners. The service stores ciphertext, metadata, and audit.',
+    'BitterPass is an operator-approved credentials vault for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
 })
 
 const tumblerCount = 24
@@ -133,6 +133,30 @@ const fitSignals = [
   },
 ]
 
+const accessSteps = [
+  {
+    index: '01',
+    label: 'Fit review',
+    title: 'We review the live surface and the trust boundary you need to keep.',
+    body:
+      'The request is manual on purpose. We want to know what your agents touch, which approval step still needs a human, and what credential pattern you are trying to replace.',
+  },
+  {
+    index: '02',
+    label: 'Invitation path',
+    title: 'Approved teams get the current console and CLI onboarding path.',
+    body:
+      'The invitation carries the console URL, the current CLI setup path, pairing steps, and the runner-enrollment walkthrough. Public marketing stays high-level by design.',
+  },
+  {
+    index: '03',
+    label: 'Support route',
+    title: 'BitterDesk is the path for a missing invitation or a stalled first setup.',
+    body:
+      'If the invite never lands or the first pairing run stalls, use BitterDesk so an operator can look at the request and the onboarding state.',
+  },
+]
+
 onMounted(() => {
   const button = document.getElementById('theme-toggle') as HTMLButtonElement | null
   if (!button) return
@@ -212,13 +236,14 @@ onMounted(() => {
             A credentials vault for operators running agents.
           </h1>
           <p class="mt-8 max-w-3xl text-lg leading-relaxed text-muted-strong md:text-xl">
-            BitterPass is for teams replacing broad service accounts, copied env vars,
-            and unauditable bot access. Passkeys gate humans. Ed25519 identities gate
-            runners. The service stores ciphertext, metadata, and audit.
+            BitterPass is for teams whose agents touch production APIs, cloud consoles,
+            billing systems, and internal control planes. It replaces broad service
+            accounts, copied env vars, and unauditable bot access with human approval,
+            per-run scope, and replayable audit.
           </p>
           <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
-            Built for the moment when agents start touching production APIs, cloud
-            consoles, billing systems, and internal control planes.
+            Passkeys gate humans. Ed25519 identities gate runners. The service stores
+            ciphertext, metadata, and audit instead of a vendor-held root secret.
           </p>
 
           <div class="mt-10 flex flex-wrap items-center gap-3">
@@ -434,8 +459,31 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="mt-8">
+          <div class="panel card-line mt-10 p-6 md:p-7">
+            <p class="eyebrow">What happens next</p>
+            <div class="mt-5 grid gap-5">
+              <article
+                v-for="step in accessSteps"
+                :key="step.index"
+                class="grid gap-4 border-t border-line pt-5 first:border-t-0 first:pt-0 md:grid-cols-[72px_1fr]"
+              >
+                <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent">
+                  {{ step.index }}
+                </p>
+                <div>
+                  <p class="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+                    {{ step.label }}
+                  </p>
+                  <h3 class="mt-2 text-xl font-semibold leading-tight">{{ step.title }}</h3>
+                  <p class="mt-3 text-muted-strong leading-relaxed">{{ step.body }}</p>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-wrap gap-3">
             <a href="https://app.bitterpass.com" class="btn-outline">Already invited? Open console</a>
+            <a href="https://bitterdesk.com" class="btn-ghost">Need help? Open BitterDesk &rarr;</a>
           </div>
         </div>
 
@@ -449,7 +497,8 @@ onMounted(() => {
           <p class="section-index">Request review</p>
           <h3 class="mt-3 text-2xl font-semibold leading-tight">Describe the live surface you need to protect.</h3>
           <p class="mt-3 text-muted-strong leading-relaxed">
-            Approvals are manual. The point is signal, not volume.
+            Approvals are manual. If the fit is right, the invitation carries the
+            current console, CLI, and runner onboarding path.
           </p>
 
           <div class="mt-8 grid gap-4">

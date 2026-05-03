@@ -26,13 +26,13 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterPass is a zero-knowledge credentials vault for operators running agents against real systems. Passkeys gate humans. Ed25519 identities gate runners. The service stores ciphertext, metadata, and audit.',
+            'BitterPass is an operator-approved credentials vault for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
         },
         { property: 'og:title', content: 'BitterPass — Operator-approved credentials for agents' },
         {
           property: 'og:description',
           content:
-            'A zero-knowledge credentials vault for operators replacing broad service accounts, copied env vars, and unauditable bot access.',
+            'Operator-approved credentials for teams replacing broad service accounts, copied env vars, and unauditable bot access when agents touch real systems.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bitterpass.com' },
@@ -41,7 +41,7 @@ export default defineNuxtConfig({
         {
           name: 'twitter:description',
           content:
-            'A zero-knowledge credentials vault for operators replacing broad service accounts, copied env vars, and unauditable bot access.',
+            'Operator-approved credentials for teams replacing broad service accounts, copied env vars, and unauditable bot access when agents touch real systems.',
         },
         { name: 'color-scheme', content: 'light dark' },
         { name: 'theme-color', content: '#f3eee5', media: '(prefers-color-scheme: light)' },
