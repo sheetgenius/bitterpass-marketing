@@ -23,7 +23,17 @@ test("home page explains the post-request path", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText(/What happens next/i)).toBeVisible();
   await expect(page.getByText(/Approved teams get the current console and CLI onboarding path/i)).toBeVisible();
-  await expect(page.getByText(/BitterDesk is the path for a missing invitation or a stalled first setup/i)).toBeVisible();
+  await expect(page.getByText(/BitterDesk is the path for access requests, missing invitations, and stalled setup/i)).toBeVisible();
+});
+
+test("home page routes access requests to BitterDesk instead of a dead static form", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator('form[action="/__submit"]')).toHaveCount(0);
+
+  const requestLink = page.getByRole("link", { name: /Start request in BitterDesk/i });
+  await expect(requestLink).toBeVisible();
+  await expect(requestLink).toHaveAttribute("href", "https://bitterdesk.com");
+  await expect(page.getByText(/Private-launch terms are scoped manually/i)).toBeVisible();
 });
 
 test("cli-setup page loads and shows the setup heading", async ({ page }) => {

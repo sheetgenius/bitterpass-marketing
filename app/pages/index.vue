@@ -150,10 +150,25 @@ const accessSteps = [
   },
   {
     index: '03',
-    label: 'Support route',
-    title: 'BitterDesk is the path for a missing invitation or a stalled first setup.',
+    label: 'Request and support route',
+    title: 'BitterDesk is the path for access requests, missing invitations, and stalled setup.',
     body:
-      'If the invite never lands or the first pairing run stalls, use BitterDesk so an operator can look at the request and the onboarding state.',
+      'Use BitterDesk for the first request and for follow-up if the invite never lands or the first pairing run stalls. An operator can look at the request and the onboarding state.',
+  },
+]
+
+const requestPrompts = [
+  {
+    label: 'Live surface',
+    body: 'Which production APIs, cloud consoles, billing systems, or internal control planes do your agents touch?',
+  },
+  {
+    label: 'Approval boundary',
+    body: 'Which step still needs a human operator before a runner receives credential material?',
+  },
+  {
+    label: 'Pilot terms',
+    body: 'Ask for private-launch pricing, onboarding timing, and the smallest scoped runner pilot that would prove value.',
   },
 ]
 
@@ -487,53 +502,39 @@ onMounted(() => {
           </div>
         </div>
 
-        <form
-          method="POST"
-          action="/__submit"
-          class="panel card-line h-fit p-7 md:p-8"
-        >
-          <input type="hidden" name="product" value="bitterpass-early-access" />
-
+        <aside class="panel card-line h-fit p-7 md:p-8" aria-labelledby="request-review-title">
           <p class="section-index">Request review</p>
-          <h3 class="mt-3 text-2xl font-semibold leading-tight">Describe the live surface you need to protect.</h3>
+          <h3 id="request-review-title" class="mt-3 text-2xl font-semibold leading-tight">
+            Start the access request in BitterDesk.
+          </h3>
           <p class="mt-3 text-muted-strong leading-relaxed">
-            Approvals are manual. If the fit is right, the invitation carries the
-            current console, CLI, and runner onboarding path.
+            There is no self-serve signup queue or static form endpoint. Send the
+            review packet through BitterDesk so an operator can follow up with the
+            console, CLI, runner onboarding path, and pilot terms.
           </p>
 
-          <div class="mt-8 grid gap-4">
-            <label class="grid gap-2">
-              <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted">Email</span>
-              <input
-                type="email"
-                name="email"
-                required
-                autocomplete="email"
-                class="field-input"
-                placeholder="you@company.com"
-              />
-            </label>
-
-            <label class="grid gap-2">
-              <span class="font-mono text-xs uppercase tracking-[0.18em] text-muted">
-                What do your agents touch?
-              </span>
-              <textarea
-                name="context"
-                rows="5"
-                class="field-input"
-                placeholder="Example: Our agents touch Stripe, cloud infrastructure, and internal admin tools. We need operator-approved access, per-run scope, and a real audit trail instead of one service account that knows everything."
-              ></textarea>
-            </label>
-
-            <div class="flex flex-wrap items-center gap-3 pt-2">
-              <button type="submit" class="btn-primary">Request access</button>
-              <span class="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-                Human review. No automated approval queue.
-              </span>
-            </div>
+          <div class="mt-8 grid gap-5">
+            <article
+              v-for="prompt in requestPrompts"
+              :key="prompt.label"
+              class="border-t border-line pt-5 first:border-t-0 first:pt-0"
+            >
+              <p class="font-mono text-xs uppercase tracking-[0.18em] text-accent">
+                {{ prompt.label }}
+              </p>
+              <p class="mt-3 text-muted-strong leading-relaxed">{{ prompt.body }}</p>
+            </article>
           </div>
-        </form>
+
+          <div class="mt-8 flex flex-wrap items-center gap-3">
+            <a href="https://bitterdesk.com" class="btn-primary">Start request in BitterDesk</a>
+            <a href="https://app.bitterpass.com" class="btn-outline">Already invited? Open console</a>
+          </div>
+
+          <p class="mt-5 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
+            Human review. Private-launch terms are scoped manually.
+          </p>
+        </aside>
       </div>
     </section>
 
