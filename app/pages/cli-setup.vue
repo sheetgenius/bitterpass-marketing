@@ -5,6 +5,10 @@ useSeoMeta({
     'A first-time operator path for BitterPass. The full CLI walkthrough arrives with your access invitation; this page covers what to expect at each step.',
 })
 
+useHead({
+  link: [{ rel: 'canonical', href: 'https://bitterpass.com/cli-setup/' }],
+})
+
 const steps = [
   {
     index: '01',

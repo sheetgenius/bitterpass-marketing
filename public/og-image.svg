@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">BitterPass social preview</title>
+  <desc id="desc">BitterPass scoped credential authority for operators running agents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0c10"/>
+      <stop offset="0.58" stop-color="#231b32"/>
+      <stop offset="1" stop-color="#f0b85a"/>
+    </linearGradient>
+    <radialGradient id="seal" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff6df"/>
+      <stop offset="0.42" stop-color="#f0b85a"/>
+      <stop offset="1" stop-color="#6d3dc2"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g opacity="0.16" stroke="#fff6df" stroke-width="1">
+    <path d="M80 94H1120M80 174H1120M80 254H1120M80 334H1120M80 414H1120M80 494H1120"/>
+    <path d="M128 70V560M248 70V560M368 70V560M488 70V560M608 70V560M728 70V560M848 70V560M968 70V560M1088 70V560"/>
+  </g>
+  <rect x="70" y="70" width="1060" height="490" rx="28" fill="#0d0c10" fill-opacity="0.78" stroke="#fff6df" stroke-opacity="0.22"/>
+  <g transform="translate(825 140)">
+    <circle cx="155" cy="155" r="142" fill="none" stroke="#fff6df" stroke-opacity="0.2" stroke-width="18"/>
+    <circle cx="155" cy="155" r="104" fill="none" stroke="#f0b85a" stroke-width="10"/>
+    <circle cx="155" cy="155" r="64" fill="url(#seal)"/>
+    <path d="M155 84v142M84 155h142" stroke="#0d0c10" stroke-width="14" stroke-linecap="round"/>
+    <path d="M155 38v34M155 238v34M38 155h34M238 155h34M72 72l24 24M214 214l24 24M238 72l-24 24M96 214l-24 24" stroke="#fff6df" stroke-opacity="0.55" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="120" y="162" fill="#f9f1df" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="72" font-weight="700">BitterPass</text>
+  <text x="124" y="222" fill="#f0b85a" font-family="IBM Plex Mono, Menlo, monospace" font-size="22" font-weight="600" letter-spacing="3">OPERATOR-APPROVED CREDENTIALS FOR AGENTS</text>
+  <text x="120" y="318" fill="#fff6df" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="42" font-weight="600">Scoped, expiring, revocable access</text>
+  <text x="120" y="376" fill="#d7ccbb" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="32">without ambient secrets.</text>
+  <g fill="#d7ccbb" font-family="IBM Plex Mono, Menlo, monospace" font-size="20">
+    <text x="122" y="468">passkey approval</text>
+    <text x="122" y="508">runner identity</text>
+    <text x="352" y="468">receipt-chain audit</text>
+    <text x="352" y="508">expiry and revocation</text>
+  </g>
+</svg>

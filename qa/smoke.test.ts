@@ -48,3 +48,24 @@ test("cli-setup page links back to the access form and the console", async ({ pa
   await expect(page.locator('a[href="https://app.bitterpass.com"]').first()).toBeVisible();
   await expect(page.locator('a[href*="#access"]').first()).toBeVisible();
 });
+
+test("home page exposes search and authority proof metadata", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    "https://bitterpass.com/",
+  );
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://bitterpass.com/og-image.svg",
+  );
+
+  const jsonLd = (await page.locator('script[type="application/ld+json"]').allTextContents()).join("\n");
+  expect(jsonLd).toContain('"SoftwareApplication"');
+  expect(jsonLd).toContain('"FAQPage"');
+  expect(jsonLd).toContain("Operator-approved credentials for agents with scoped, expiring, revocable, auditable access.");
+
+  await expect(page.getByRole("heading", { name: /Buyer questions before a runner/i })).toBeVisible();
+  await expect(page.getByText(/BitterPass owns approval, issuance, expiry, revocation, and audit receipts/i)).toBeVisible();
+});

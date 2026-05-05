@@ -36,7 +36,12 @@ export default defineNuxtConfig({
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://bitterpass.com' },
+        { property: 'og:image', content: 'https://bitterpass.com/og-image.svg' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: 'BitterPass scoped credential authority for agents' },
         { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:image', content: 'https://bitterpass.com/og-image.svg' },
         { name: 'twitter:title', content: 'BitterPass — Operator-approved credentials for agents' },
         {
           name: 'twitter:description',

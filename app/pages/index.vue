@@ -172,6 +172,67 @@ const requestPrompts = [
   },
 ]
 
+const authorityFaqs = [
+  {
+    question: 'Does BitterPass replace a general secret manager?',
+    answer:
+      'No. BitterPass is for operator-approved agent access: scoped bundles, expiry, revocation, and receipts for runs that touch real systems.',
+  },
+  {
+    question: 'Do agents receive standing credentials?',
+    answer:
+      'No. Enrolled runner identities request scoped material for a run. Access is bounded by the operator-approved scope and lifecycle state.',
+  },
+  {
+    question: 'Where do credential lifecycle receipts live?',
+    answer:
+      'BitterPass owns approval, issuance, expiry, revocation, and audit receipts. Factory, Grid, Hub, and marketing surfaces can link to that truth but do not become the authority.',
+  },
+  {
+    question: 'What is public during private launch?',
+    answer:
+      'The marketing site explains the contract. Detailed CLI commands, pairing steps, and recovery material travel only with approved invitations.',
+  },
+]
+
+useHead({
+  link: [{ rel: 'canonical', href: 'https://bitterpass.com/' }],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify([
+        {
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'BitterPass',
+          applicationCategory: 'SecurityApplication',
+          operatingSystem: 'Web, CLI',
+          url: 'https://bitterpass.com/',
+          description:
+            'Operator-approved credentials for agents with scoped, expiring, revocable, auditable access.',
+          publisher: {
+            '@type': 'Organization',
+            name: 'BitterPass',
+            url: 'https://bitterpass.com/',
+          },
+        },
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: authorityFaqs.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        },
+      ]),
+    },
+  ],
+})
+
 onMounted(() => {
   const button = document.getElementById('theme-toggle') as HTMLButtonElement | null
   if (!button) return
@@ -446,6 +507,33 @@ onMounted(() => {
             <p class="eyebrow">{{ audience.eyebrow }}</p>
             <h3 class="mt-4 text-2xl font-semibold leading-tight">{{ audience.title }}</h3>
             <p class="mt-4 text-muted-strong leading-relaxed">{{ audience.body }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="border-t border-line">
+      <div class="mx-auto max-w-6xl px-6 py-24">
+        <p class="section-index">05 / FAQ</p>
+        <h2
+          class="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight md:text-5xl"
+        >
+          Buyer questions before a runner ever sees credential material.
+        </h2>
+        <p class="mt-6 max-w-3xl text-lg leading-relaxed text-muted-strong">
+          BitterPass is the authority surface for agent credential lifecycle receipts.
+          Other systems can observe or link to those receipts, but they do not become
+          the source of truth for issuance, expiry, revocation, or audit state.
+        </p>
+
+        <div class="mt-14 grid gap-6 md:grid-cols-2">
+          <article
+            v-for="item in authorityFaqs"
+            :key="item.question"
+            class="panel card-line p-6 md:p-7"
+          >
+            <h3 class="text-xl font-semibold leading-tight">{{ item.question }}</h3>
+            <p class="mt-4 text-muted-strong leading-relaxed">{{ item.answer }}</p>
           </article>
         </div>
       </div>
