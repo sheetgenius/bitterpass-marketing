@@ -58,6 +58,18 @@ export default defineNuxtConfig({
       ],
       script: [
         {
+          key: 'ga4-loader',
+          tagPosition: 'head',
+          src: 'https://www.googletagmanager.com/gtag/js?id=G-5N0EM7WK5J',
+          async: true,
+        },
+        {
+          key: 'ga4-init',
+          tagPosition: 'head',
+          innerHTML:
+            "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-5N0EM7WK5J');",
+        },
+        {
           key: 'theme-init',
           tagPosition: 'head',
           innerHTML:
