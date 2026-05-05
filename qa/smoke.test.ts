@@ -69,3 +69,9 @@ test("home page exposes search and authority proof metadata", async ({ page }) =
   await expect(page.getByRole("heading", { name: /Buyer questions before a runner/i })).toBeVisible();
   await expect(page.getByText(/BitterPass owns approval, issuance, expiry, revocation, and audit receipts/i)).toBeVisible();
 });
+
+test("deploy health endpoint responds for live verification", async ({ page }) => {
+  const response = await page.goto("/up");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("body")).toContainText("ok");
+});
