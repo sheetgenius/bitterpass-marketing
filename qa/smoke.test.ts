@@ -70,8 +70,15 @@ test("home page exposes search and authority proof metadata", async ({ page }) =
   await expect(page.getByText(/BitterPass owns approval, issuance, expiry, revocation, and audit receipts/i)).toBeVisible();
 });
 
+test("home page keeps Atlas authority framing instead of consumer password-manager framing", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText(/scoped bundles, expiry, revocation, and receipts/i)).toBeVisible();
+  await expect(page.getByText(/There is no self-serve signup queue or static form endpoint/i)).toBeVisible();
+  await expect(page.getByText(/generic password manager/i)).toHaveCount(0);
+});
+
 test("deploy health endpoint responds for live verification", async ({ page }) => {
-  const response = await page.goto("/up");
+  const response = await page.goto("/up/");
   expect(response?.status()).toBe(200);
   await expect(page.locator("body")).toContainText("ok");
 });

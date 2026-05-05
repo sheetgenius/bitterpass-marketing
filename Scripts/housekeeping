@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+for relative_path in .output test-results playwright-report; do
+  case "$relative_path" in
+    "" | "." | "/" | /*)
+      echo "Refusing unsafe housekeeping path: $relative_path" >&2
+      exit 1
+      ;;
+  esac
+
+  if [ -e "$relative_path" ]; then
+    rm -rf -- "$relative_path"
+  fi
+done
+
+echo "BitterPass housekeeping complete"

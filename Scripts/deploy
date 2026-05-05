@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-chmod +x Scripts/radicchio
+chmod +x Scripts/radicchio Scripts/housekeeping Scripts/verify-ops-manifest
 Scripts/radicchio deploy

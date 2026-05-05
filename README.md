@@ -2,8 +2,9 @@
 
 Marketing site for [bitterpass.com](https://bitterpass.com).
 
-Static Nuxt 4 + Tailwind 4 site, deployed to Radicchio (Cloudflare Worker
-edge).
+Static Nuxt 4 + Tailwind 4 site. Production deploys are owned by BitterGrid;
+`radicchio.json` remains the static publish contract and legacy Radicchio site
+reference.
 
 Do not make this repo the source of truth for local CLI onboarding. The
 canonical private-launch setup guide lives in the Bitter repo:
@@ -31,35 +32,40 @@ to override the system preference.
 
 ## Visual verification
 
-Use the `bitter-browser` plugin to screenshot for design review:
+Use the Bitter Browser CLI to screenshot the live or local surface:
 
 ```
-BITTER_PLUGIN_REQUEST_FILE=/tmp/req.json /path/to/bitter-browser-plugin run
+bitter browser capabilities
+bitter browser screenshot http://127.0.0.1:8766/ --allow-loopback --out screenshots/bitter-browser-desktop.png --width 1280 --height 900 --settle-ms 500
+bitter browser screenshot http://127.0.0.1:8766/ --allow-loopback --out screenshots/bitter-browser-mobile.png --mobile --settle-ms 500
 ```
 
-with a request payload like:
+## Verification
 
-```json
-{
-  "schema_version": "bitter.plugin.request.v0",
-  "invocation_id": "inv_review",
-  "namespace": "browser",
-  "operation": "browser.screenshot",
-  "input": {
-    "url": "http://127.0.0.1:8766/",
-    "output_path": "/tmp/bitterpass.png",
-    "width": 1440
-  }
-}
+The repo-owned verification contract lives in `ops/manifest.json`.
+
+```
+npm run qa:ops
+npm run qa:smoke
 ```
 
 ## Deploy
 
-The site is wired to Radicchio site_id 93. Deploys go through the
-Bitter MCP `radicchio_deploy` tool (or Factory's `provision_site`).
+The site is wired to BitterGrid source deploys from `main`.
+
+- `Scripts/deploy` builds and publishes the static Radicchio artifact.
+- `Scripts/postdeploy-verify` reads `ops/manifest.json`, checks the live home
+  page, CLI setup page, and `/up/`, then runs the Playwright smoke suite against
+  `VERIFY_BASE_URL`.
+- `Scripts/housekeeping` only removes repo-local generated artifacts declared
+  as ephemeral in the ops manifest.
 
 Manual deploy fallback (only if MCP path fails):
 
 1. `npm run generate` to produce `.output/public/`.
 2. Use Radicchio's deploy API directly with `radicchio.json` as the
    contract reference.
+
+This repo is the marketing surface only. The credential service and API live at
+`app.bitterpass.com` and `api.bitterpass.com`; do not place service secrets,
+crypto custody internals, pairing tokens, or approved-customer material here.

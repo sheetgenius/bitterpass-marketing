@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "hosting": "hetzner",
+  "service_name": "bitterpass.com",
+  "healthcheck_path": "/up/",
+  "runtime": {
+    "state": "stateless",
+    "container_port": 3000,
+    "processes": [
+      "web"
+    ]
+  },
+  "verification": {
+    "liveness_path": "/up/",
+    "readiness_path": null,
+    "release_identity": {
+      "artifact_digest": {
+        "expected_from": "deploy_record",
+        "observed_from": "container_inspection"
+      },
+      "reported_git_sha_path": "/up/",
+      "reported_image_digest_env": null
+    },
+    "checks": [
+      {
+        "name": "marketing_home",
+        "kind": "http",
+        "path": "/",
+        "expect_status": 200,
+        "timeout_ms": 3000,
+        "runs_on": [
+          "deploy",
+          "post_deploy",
+          "continuous"
+        ],
+        "policy": "required",
+        "access_path": "edge"
+      },
+      {
+        "name": "cli_setup",
+        "kind": "http",
+        "path": "/cli-setup/",
+        "expect_status": 200,
+        "timeout_ms": 3000,
+        "runs_on": [
+          "deploy",
+          "post_deploy",
+          "continuous"
+        ],
+        "policy": "required",
+        "access_path": "edge"
+      },
+      {
+        "name": "health_probe",
+        "kind": "http",
+        "path": "/up/",
+        "expect_status": 200,
+        "timeout_ms": 3000,
+        "runs_on": [
+          "deploy",
+          "post_deploy",
+          "continuous"
+        ],
+        "policy": "required",
+        "access_path": "edge"
+      }
+    ]
+  },
+  "housekeeping": {
+    "command": "Scripts/housekeeping",
+    "durable_paths": [],
+    "ephemeral_paths": [
+      ".output",
+      "test-results",
+      "playwright-report"
+    ]
+  }
+}

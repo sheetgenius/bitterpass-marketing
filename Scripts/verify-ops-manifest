@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+import json
+import sys
+from pathlib import Path
+
+ALLOWED_RUN_MODES = {"deploy", "post_deploy", "continuous", "ad_hoc"}
+ALLOWED_POLICIES = {"required", "degraded", "advisory"}
+ALLOWED_ACCESS_PATHS = {"edge", "ingress", "control", "private"}
+
+
+def fail(message):
+    print(f"ops manifest invalid: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def require(condition, message):
+    if not condition:
+        fail(message)
+
+
+manifest_path = Path(sys.argv[1] if len(sys.argv) > 1 else "ops/manifest.json")
+try:
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+except FileNotFoundError:
+    fail(f"{manifest_path} is missing")
+except json.JSONDecodeError as exc:
+    fail(f"{manifest_path} is not valid JSON: {exc}")
+
+require(isinstance(manifest, dict), "top level must be an object")
+require(manifest.get("schema_version") == 1, "schema_version must be 1")
+require(manifest.get("hosting") == "hetzner", "hosting must be hetzner for Factory ops audit compatibility")
+require(manifest.get("service_name") == "bitterpass.com", "service_name must be bitterpass.com")
+
+runtime = manifest.get("runtime")
+require(isinstance(runtime, dict), "runtime must be an object")
+require(runtime.get("state") == "stateless", "marketing site runtime must remain stateless")
+require(runtime.get("container_port"), "runtime.container_port is required")
+require(isinstance(runtime.get("processes"), list) and "web" in runtime["processes"], "runtime.processes must include web")
+
+verification = manifest.get("verification")
+require(isinstance(verification, dict), "verification must be an object")
+require(manifest.get("healthcheck_path") == verification.get("liveness_path"), "healthcheck_path must match verification.liveness_path")
+
+release_identity = verification.get("release_identity")
+require(isinstance(release_identity, dict), "verification.release_identity must be an object")
+artifact_digest = release_identity.get("artifact_digest")
+require(isinstance(artifact_digest, dict), "verification.release_identity.artifact_digest must be an object")
+require(artifact_digest.get("expected_from"), "artifact_digest.expected_from is required")
+require(artifact_digest.get("observed_from"), "artifact_digest.observed_from is required")
+require(release_identity.get("reported_git_sha_path"), "reported_git_sha_path is required")
+
+checks = verification.get("checks")
+require(isinstance(checks, list) and checks, "verification.checks must include at least one check")
+
+for index, check in enumerate(checks):
+    require(isinstance(check, dict), f"verification.checks[{index}] must be an object")
+    name = check.get("name") or f"checks[{index}]"
+    require(check.get("kind") == "http", f"{name} must use kind=http")
+    require(isinstance(check.get("path"), str) and check["path"].startswith("/"), f"{name} path must start with /")
+    require(int(check.get("expect_status") or 0) > 0, f"{name} expect_status must be positive")
+    require(int(check.get("timeout_ms") or 0) > 0, f"{name} timeout_ms must be positive")
+
+    runs_on = check.get("runs_on")
+    require(isinstance(runs_on, list) and runs_on, f"{name} runs_on must be a non-empty list")
+    require(set(runs_on).issubset(ALLOWED_RUN_MODES), f"{name} has unsupported runs_on mode")
+    require(check.get("policy") in ALLOWED_POLICIES, f"{name} has unsupported policy")
+    require(check.get("access_path") in ALLOWED_ACCESS_PATHS, f"{name} has unsupported access_path")
+
+housekeeping = manifest.get("housekeeping")
+require(isinstance(housekeeping, dict), "housekeeping must be an object")
+require(housekeeping.get("command") == "Scripts/housekeeping", "housekeeping.command must be Scripts/housekeeping")
+durable_paths = housekeeping.get("durable_paths")
+require(isinstance(durable_paths, list), "housekeeping.durable_paths must be a list")
+require(not durable_paths, "stateless marketing site must not declare durable paths")
+require(Path("Scripts/housekeeping").is_file(), "Scripts/housekeeping must exist")
+
+print(f"ops manifest ok: {len(checks)} checks")

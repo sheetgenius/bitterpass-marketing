@@ -8,6 +8,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "qa:ops": "python3 Scripts/verify-ops-manifest",
     "postinstall": "nuxt prepare",
     "qa:smoke": "npx playwright test"
   },
