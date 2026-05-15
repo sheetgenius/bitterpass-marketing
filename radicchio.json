@@ -1,8 +1,8 @@
 {
   "api_base": "https://radicchio.bitter.sh",
   "build": {
-    "install": "npm install --no-audit",
-    "command": "npm run generate",
+    "install": "rm -rf node_modules && bun install --frozen-lockfile",
+    "command": "bun run generate",
     "publish": ".output/public"
   },
   "hostname": "bitterpass.com",
