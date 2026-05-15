@@ -15,8 +15,8 @@ CLI-owned guide.
 ## Local development
 
 ```
-npm install
-npm run generate
+bun install --frozen-lockfile
+bun run generate
 ```
 
 Generated output lands in `.output/public/`.
@@ -45,8 +45,8 @@ bitter browser screenshot http://127.0.0.1:8766/ --allow-loopback --out screensh
 The repo-owned verification contract lives in `ops/manifest.json`.
 
 ```
-npm run qa:ops
-npm run qa:smoke
+bun run qa:ops
+bun run qa:smoke
 ```
 
 ## Deploy
@@ -62,7 +62,7 @@ The site is wired to BitterGrid source deploys from `main`.
 
 Manual deploy fallback (only if MCP path fails):
 
-1. `npm run generate` to produce `.output/public/`.
+1. `bun run generate` to produce `.output/public/`.
 2. Use Radicchio's deploy API directly with `radicchio.json` as the
    contract reference.
 

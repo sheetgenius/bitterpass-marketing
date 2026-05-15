@@ -1,0 +1,7 @@
+[install]
+minimumReleaseAge = 604800
+minimumReleaseAgeExcludes = ["devalue"]
+auto = "disable"
+frozenLockfile = true
+saveTextLockfile = true
+exact = true
