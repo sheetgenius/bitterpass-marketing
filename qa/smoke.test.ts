@@ -82,3 +82,24 @@ test("deploy health endpoint responds for live verification", async ({ page }) =
   expect(response?.status()).toBe(200);
   await expect(page.locator("body")).toContainText("ok");
 });
+
+test("account paths bridge to Bitter account surfaces", async ({ page }) => {
+  await page.goto("/login");
+  await expect(page.getByRole("heading", { name: "Sign in through BitterPass Console." })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Continue with Bitter account" })).toHaveAttribute(
+    "href",
+    "https://app.bitterpass.com/login",
+  );
+  await expect(page.getByRole("link", { name: "Request Bitter account" })).toHaveAttribute(
+    "href",
+    "https://bitter.sh/signup",
+  );
+
+  await page.goto("/signup");
+  await expect(page.getByRole("heading", { name: "Request access through Bitter." })).toBeVisible();
+  await expect(page.getByText("There is no BitterPass-only signup path")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Request Bitter account" })).toHaveAttribute(
+    "href",
+    "https://bitter.sh/signup",
+  );
+});
