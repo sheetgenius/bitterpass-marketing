@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
+BASE_URL="${VERIFY_BASE_URL:-https://bitterpass.com}"
+BASE_URL="${BASE_URL%/}"
+HTTP_REPORT="${ARTIFACT_DIR}/verify-http.json"
+SMOKE_JSON="${ARTIFACT_DIR}/smoke-screen.json"
+SMOKE_MD="${ARTIFACT_DIR}/SMOKE_SCREEN.md"
+
+mkdir -p "$ARTIFACT_DIR"
+
+python3 - "$BASE_URL" "$ARTIFACT_DIR" "$HTTP_REPORT" "$SMOKE_JSON" "$SMOKE_MD" <<'PY'
+import json
+import pathlib
+import sys
+import time
+import urllib.error
+import urllib.request
+
+base_url, artifact_dir, http_report, smoke_json, smoke_md = sys.argv[1:6]
+artifact_root = pathlib.Path(artifact_dir)
+checks = []
+failures = []
+responses = {}
+
+
+def record(name, ok, **extra):
+    checks.append({"name": name, "result": "ok" if ok else "failed", **extra})
+    if not ok:
+        failures.append(name)
+
+
+def fetch(key, path):
+    url = f"{base_url}{path}"
+    body_path = artifact_root / f"verify.{key}.body"
+    try:
+        request = urllib.request.Request(url, headers={"User-Agent": "BitterPassMarketingWorkcellVerify/1.0"})
+        with urllib.request.urlopen(request, timeout=10) as response:
+            status = response.status
+            body = response.read()
+            content_type = response.headers.get("Content-Type", "")
+            final_url = response.geturl()
+    except urllib.error.HTTPError as exc:
+        status = exc.code
+        body = exc.read()
+        content_type = exc.headers.get("Content-Type", "") if exc.headers else ""
+        final_url = exc.geturl()
+    except Exception as exc:
+        status = 0
+        body = f"{type(exc).__name__}: {exc}".encode()
+        content_type = ""
+        final_url = url
+
+    body_path.write_bytes(body)
+    responses[key] = {
+        "path": path,
+        "url": url,
+        "status": status,
+        "bytes": len(body),
+        "content_type": content_type,
+        "final_url": final_url,
+        "artifact_ref": str(body_path),
+    }
+    return status, body.decode("utf-8", errors="replace"), body_path
+
+
+root_status, root, root_path = fetch("root", "/")
+cli_status, cli, cli_path = fetch("cli_setup", "/cli-setup/")
+login_status, login, login_path = fetch("login", "/login")
+signup_status, signup, signup_path = fetch("signup", "/signup")
+up_status, up_text, up_path = fetch("up", "/up/")
+
+record("root:status", root_status == 200, status=root_status, artifact_ref=str(root_path))
+record("root:title", "BitterPass" in root and "Operator-approved credentials for agents" in root, artifact_ref=str(root_path))
+record("root:support_path", "https://bitterdesk.com" in root and "BitterDesk" in root, artifact_ref=str(root_path))
+record("root:no_retired_docs_path", "sheetgenius/bitter/blob/main" not in root, artifact_ref=str(root_path))
+record("root:authority_framing", "scoped bundles, expiry, revocation, and receipts" in root and "generic password manager" not in root, artifact_ref=str(root_path))
+record("root:canonical_metadata", 'href="https://bitterpass.com/"' in root and "https://bitterpass.com/og-image.svg" in root, artifact_ref=str(root_path))
+
+record("cli:status", cli_status == 200, status=cli_status, artifact_ref=str(cli_path))
+record("cli:setup_copy", "Set up the BitterPass CLI." in cli and "full CLI walkthrough arrives with your access invitation" in cli, artifact_ref=str(cli_path))
+record("cli:console_bridge", "https://app.bitterpass.com" in cli and "https://bitterdesk.com" in cli, artifact_ref=str(cli_path))
+
+record("login:status", login_status == 200, status=login_status, artifact_ref=str(login_path))
+record("login:console_bridge", "Sign in through BitterPass Console." in login and "https://app.bitterpass.com/login" in login, artifact_ref=str(login_path))
+record("login:account_request", "https://bitter.sh/signup" in login, artifact_ref=str(login_path))
+
+record("signup:status", signup_status == 200, status=signup_status, artifact_ref=str(signup_path))
+record("signup:no_local_signup", "There is no BitterPass-only signup path" in signup and "https://bitter.sh/signup" in signup, artifact_ref=str(signup_path))
+
+try:
+    up_payload = json.loads(up_text)
+except json.JSONDecodeError:
+    up_payload = {}
+record("up:ok", up_status == 200 and up_payload.get("ok") is True, status=up_status, artifact_ref=str(up_path))
+record("up:service", up_payload.get("service") == "bitterpass.com", service=up_payload.get("service"), artifact_ref=str(up_path))
+
+report = {
+    "schema_version": "bitterpass_marketing.workcell_verify.v1",
+    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "base_url": base_url,
+    "responses": responses,
+    "checks": checks,
+    "result": "failed" if failures else "ok",
+    "failures": failures,
+}
+pathlib.Path(http_report).write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+
+entries = [
+    {
+        "key": "marketing.front_door",
+        "actor": "signed_out_operator",
+        "entrypoint": "/",
+        "summary": "BitterPass public front door presents agent credential authority, support path, and search metadata without retired docs links.",
+        "proves": ["root_http_200", "authority_framing", "support_path", "canonical_metadata"],
+        "artifact_refs": [str(root_path), http_report],
+        "result": "failed" if any(name.startswith("root:") for name in failures) else "ok",
+    },
+    {
+        "key": "cli_setup",
+        "actor": "signed_out_operator",
+        "entrypoint": "/cli-setup/",
+        "summary": "CLI setup page keeps detailed commands invitation-gated while linking console and support surfaces.",
+        "proves": ["cli_setup_http_200", "invitation_gated_copy", "console_bridge", "support_bridge"],
+        "artifact_refs": [str(cli_path), http_report],
+        "result": "failed" if any(name.startswith("cli:") for name in failures) else "ok",
+    },
+    {
+        "key": "account_bridge",
+        "actor": "signed_out_operator",
+        "entrypoint": "/login, /signup",
+        "summary": "Account paths bridge to BitterPass Console and Bitter account request surfaces instead of local marketing signup.",
+        "proves": ["login_http_200", "signup_http_200", "console_login", "no_local_signup"],
+        "artifact_refs": [str(login_path), str(signup_path), http_report],
+        "result": "failed" if any(name.startswith(("login:", "signup:")) for name in failures) else "ok",
+    },
+    {
+        "key": "runtime.health_probe",
+        "actor": "operator",
+        "entrypoint": "/up/",
+        "summary": "Static health probe reports BitterPass marketing service identity.",
+        "proves": ["health_ok", "service_identity"],
+        "artifact_refs": [str(up_path), http_report],
+        "result": "failed" if any(name.startswith("up:") for name in failures) else "ok",
+    },
+]
+smoke = {
+    "schema_version": "bitterpass_marketing.smoke_screen.v1",
+    "generated_at": report["generated_at"],
+    "base_url": base_url,
+    "entries": entries,
+    "limitations": [
+        "This verification covers the public marketing and setup surfaces only.",
+        "Console login, passkey ceremonies, vault unlock, and credential custody remain owned by app.bitterpass.com and separate authenticated checks."
+    ],
+    "result": report["result"],
+    "failures": failures,
+}
+pathlib.Path(smoke_json).write_text(json.dumps(smoke, indent=2) + "\n", encoding="utf-8")
+
+lines = [
+    "# BitterPass Marketing Smoke Screen",
+    "",
+    f"- Generated: {smoke['generated_at']}",
+    f"- Base URL: {base_url}",
+    f"- Result: {smoke['result']}",
+    "",
+]
+for entry in entries:
+    lines.extend([
+        f"## {entry['key']}",
+        f"- Actor: {entry['actor']}",
+        f"- Entrypoint: {entry['entrypoint']}",
+        f"- Summary: {entry['summary']}",
+        f"- Proves: {', '.join(entry['proves'])}",
+        f"- Result: {entry['result']}",
+        f"- Artifacts: {', '.join(entry['artifact_refs'])}",
+        "",
+    ])
+pathlib.Path(smoke_md).write_text("\n".join(lines), encoding="utf-8")
+
+if failures:
+    raise SystemExit(1)
+PY
+
+echo "workcell-verify ok base_url=${BASE_URL}"

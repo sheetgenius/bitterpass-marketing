@@ -1,0 +1,172 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
+CONTRACT_REPORT="${ARTIFACT_DIR}/prepare.contract.json"
+OPS_LOG="${ARTIFACT_DIR}/prepare.ops.log"
+GENERATE_LOG="${ARTIFACT_DIR}/prepare.generate.log"
+
+mkdir -p "$ARTIFACT_DIR"
+
+write_failure() {
+  local step="$1"
+  cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
+{
+  "schema_version": "bitterpass_marketing.workcell_prepare.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "environment_shape": "static_nuxt_radicchio_preflight",
+  "failed_step": "${step}",
+  "result": "failed"
+}
+JSON
+}
+
+run_step() {
+  local name="$1"
+  local log_path="$2"
+  shift 2
+
+  {
+    printf '$'
+    printf ' %q' "$@"
+    printf '\n\n'
+    "$@"
+  } >"$log_path" 2>&1 || {
+    write_failure "$name"
+    echo "workcell-prepare failed: ${name}" >&2
+    exit 1
+  }
+}
+
+python3 - "$CONTRACT_REPORT" <<'PY'
+import json
+import pathlib
+import sys
+import time
+
+artifact_path = pathlib.Path(sys.argv[1])
+required = [
+    "package.json",
+    "bun.lock",
+    "bunfig.toml",
+    "nuxt.config.ts",
+    "playwright.config.ts",
+    "qa/smoke.test.ts",
+    "radicchio.json",
+    "ops/manifest.json",
+    "public/up/index.html",
+    "Scripts/postdeploy-verify",
+    "Scripts/radicchio",
+    "Scripts/verify-ops-manifest",
+]
+
+missing = [path for path in required if not pathlib.Path(path).is_file()]
+package = json.loads(pathlib.Path("package.json").read_text(encoding="utf-8"))
+radicchio = json.loads(pathlib.Path("radicchio.json").read_text(encoding="utf-8"))
+manifest = json.loads(pathlib.Path("ops/manifest.json").read_text(encoding="utf-8"))
+playwright = pathlib.Path("playwright.config.ts").read_text(encoding="utf-8", errors="replace")
+smoke = pathlib.Path("qa/smoke.test.ts").read_text(encoding="utf-8", errors="replace")
+
+scripts = package.get("scripts", {})
+radicchio_build = radicchio.get("build", {})
+manifest_checks = manifest.get("verification", {}).get("checks", [])
+manifest_check_names = {row.get("name") for row in manifest_checks}
+
+checks = [
+    {
+        "name": "required_files",
+        "result": "failed" if missing else "ok",
+        "missing": missing,
+    },
+    {
+        "name": "package_manager",
+        "result": "ok" if package.get("packageManager") == "bun@1.3.13" else "failed",
+        "packageManager": package.get("packageManager"),
+    },
+    {
+        "name": "package_scripts",
+        "result": "ok" if scripts.get("qa:ops") == "python3 Scripts/verify-ops-manifest" and scripts.get("qa:smoke") == "playwright test" and scripts.get("generate") == "nuxt generate" else "failed",
+        "scripts": {key: scripts.get(key) for key in ["generate", "qa:ops", "qa:smoke"]},
+    },
+    {
+        "name": "radicchio_target",
+        "result": "ok" if radicchio.get("hostname") == "bitterpass.com" and radicchio.get("site_id") == 93 else "failed",
+        "hostname": radicchio.get("hostname"),
+        "site_id": radicchio.get("site_id"),
+    },
+    {
+        "name": "radicchio_build",
+        "result": "ok" if radicchio_build.get("command") == "bun run generate" and radicchio_build.get("publish") == ".output/public" else "failed",
+        "build": radicchio_build,
+    },
+    {
+        "name": "manifest_target",
+        "result": "ok" if manifest.get("service_name") == "bitterpass.com" and manifest.get("healthcheck_path") == "/up/" else "failed",
+        "service_name": manifest.get("service_name"),
+        "healthcheck_path": manifest.get("healthcheck_path"),
+    },
+    {
+        "name": "manifest_required_checks",
+        "result": "ok" if {"marketing_home", "cli_setup", "health_probe"}.issubset(manifest_check_names) else "failed",
+        "check_names": sorted(name for name in manifest_check_names if name),
+    },
+    {
+        "name": "playwright_live_override",
+        "result": "ok" if "PLAYWRIGHT_BASE_URL" in playwright else "failed",
+    },
+    {
+        "name": "smoke_scope",
+        "result": "ok" if "bitterdesk.com" in smoke and "app.bitterpass.com" in smoke and "Request Bitter account" in smoke else "failed",
+    },
+]
+failures = [check["name"] for check in checks if check["result"] != "ok"]
+payload = {
+    "schema_version": "bitterpass_marketing.workcell_prepare_contract.v1",
+    "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "checks": checks,
+    "result": "failed" if failures else "ok",
+    "failures": failures,
+}
+artifact_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+if failures:
+    raise SystemExit(1)
+PY
+
+run_step "ops_manifest" "$OPS_LOG" bun run qa:ops
+run_step "static_generate" "$GENERATE_LOG" bun run generate
+
+git_sha="$(git rev-parse HEAD 2>/dev/null || true)"
+
+cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
+{
+  "schema_version": "bitterpass_marketing.workcell_prepare.v1",
+  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "environment_shape": "static_nuxt_radicchio_preflight",
+  "git_sha": "${git_sha}",
+  "contract_report": "${CONTRACT_REPORT}",
+  "logs": {
+    "ops": "${OPS_LOG}",
+    "generate": "${GENERATE_LOG}"
+  },
+  "static_output": ".output/public",
+  "runtime_health_path": "/up/",
+  "limitations": [
+    "This prepare path validates and generates the public BitterPass marketing site without credential, passkey, or vault material.",
+    "Console login, passkey ceremonies, vault unlock, and credential custody remain owned by app.bitterpass.com and separate authenticated checks."
+  ],
+  "result": "ok"
+}
+JSON
+
+cat >"${ARTIFACT_DIR}/PREPARE.md" <<MARKDOWN
+# BitterPass Marketing Workcell Prepare
+
+- Result: ok
+- Shape: static Nuxt/Radicchio preflight
+- Git SHA: ${git_sha}
+- Contract report: ${CONTRACT_REPORT}
+- Ops log: ${OPS_LOG}
+- Generate log: ${GENERATE_LOG}
+MARKDOWN
+
+echo "workcell-prepare ok static_output=.output/public"
