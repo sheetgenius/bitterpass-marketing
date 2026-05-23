@@ -2,7 +2,7 @@
   "api_base": "https://radicchio.bitter.sh",
   "build": {
     "install": "rm -rf node_modules && bun install --frozen-lockfile",
-    "command": "bun run generate",
+    "command": "bun run generate && bun Scripts/write-health.ts .output/public/up/index.html",
     "publish": ".output/public"
   },
   "hostname": "bitterpass.com",

@@ -4,7 +4,9 @@ set -euo pipefail
 ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
 CONTRACT_REPORT="${ARTIFACT_DIR}/prepare.contract.json"
 OPS_LOG="${ARTIFACT_DIR}/prepare.ops.log"
+TEST_LOG="${ARTIFACT_DIR}/prepare.test.log"
 GENERATE_LOG="${ARTIFACT_DIR}/prepare.generate.log"
+HEALTH_LOG="${ARTIFACT_DIR}/prepare.health.log"
 
 mkdir -p "$ARTIFACT_DIR"
 
@@ -54,10 +56,14 @@ required = [
     "qa/smoke.test.ts",
     "radicchio.json",
     "ops/manifest.json",
+    "public/_headers",
     "public/up/index.html",
     "Scripts/postdeploy-verify",
     "Scripts/radicchio",
+    "Scripts/static-headers.test.ts",
     "Scripts/verify-ops-manifest",
+    "Scripts/write-health.ts",
+    "Scripts/write-health.test.ts",
 ]
 
 missing = [path for path in required if not pathlib.Path(path).is_file()]
@@ -66,6 +72,8 @@ radicchio = json.loads(pathlib.Path("radicchio.json").read_text(encoding="utf-8"
 manifest = json.loads(pathlib.Path("ops/manifest.json").read_text(encoding="utf-8"))
 playwright = pathlib.Path("playwright.config.ts").read_text(encoding="utf-8", errors="replace")
 smoke = pathlib.Path("qa/smoke.test.ts").read_text(encoding="utf-8", errors="replace")
+static_headers = pathlib.Path("public/_headers").read_text(encoding="utf-8", errors="replace")
+health_writer = pathlib.Path("Scripts/write-health.ts").read_text(encoding="utf-8", errors="replace")
 
 scripts = package.get("scripts", {})
 radicchio_build = radicchio.get("build", {})
@@ -96,7 +104,7 @@ checks = [
     },
     {
         "name": "radicchio_build",
-        "result": "ok" if radicchio_build.get("command") == "bun run generate" and radicchio_build.get("publish") == ".output/public" else "failed",
+        "result": "ok" if radicchio_build.get("command") == "bun run generate && bun Scripts/write-health.ts .output/public/up/index.html" and radicchio_build.get("publish") == ".output/public" else "failed",
         "build": radicchio_build,
     },
     {
@@ -113,6 +121,14 @@ checks = [
     {
         "name": "playwright_live_override",
         "result": "ok" if "PLAYWRIGHT_BASE_URL" in playwright else "failed",
+    },
+    {
+        "name": "static_security_headers",
+        "result": "ok" if "frame-ancestors 'none'" in static_headers and "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: DENY" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=()" in static_headers else "failed",
+    },
+    {
+        "name": "health_writer",
+        "result": "ok" if 'service: "bitterpass.com"' in health_writer and 'hostname: "bitterpass.com"' in health_writer and "RADICCHIO_RELEASE_SHA" in health_writer and "secret_material_returned: false" in health_writer else "failed",
     },
     {
         "name": "smoke_scope",
@@ -133,7 +149,9 @@ if failures:
 PY
 
 run_step "ops_manifest" "$OPS_LOG" bun run qa:ops
+run_step "unit_tests" "$TEST_LOG" bun test Scripts/static-headers.test.ts Scripts/write-health.test.ts
 run_step "static_generate" "$GENERATE_LOG" bun run generate
+run_step "release_health" "$HEALTH_LOG" bun Scripts/write-health.ts .output/public/up/index.html
 
 git_sha="$(git rev-parse HEAD 2>/dev/null || true)"
 
@@ -146,7 +164,9 @@ cat >"${ARTIFACT_DIR}/prepare.json" <<JSON
   "contract_report": "${CONTRACT_REPORT}",
   "logs": {
     "ops": "${OPS_LOG}",
-    "generate": "${GENERATE_LOG}"
+    "tests": "${TEST_LOG}",
+    "generate": "${GENERATE_LOG}",
+    "health": "${HEALTH_LOG}"
   },
   "static_output": ".output/public",
   "runtime_health_path": "/up/",
@@ -166,7 +186,9 @@ cat >"${ARTIFACT_DIR}/PREPARE.md" <<MARKDOWN
 - Git SHA: ${git_sha}
 - Contract report: ${CONTRACT_REPORT}
 - Ops log: ${OPS_LOG}
+- Test log: ${TEST_LOG}
 - Generate log: ${GENERATE_LOG}
+- Health log: ${HEALTH_LOG}
 MARKDOWN
 
 echo "workcell-prepare ok static_output=.output/public"

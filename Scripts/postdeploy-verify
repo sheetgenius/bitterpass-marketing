@@ -12,6 +12,9 @@ VERIFY_RUN_MODE="${VERIFY_RUN_MODE:-deploy}"
 VERIFY_MANIFEST_PATH="${VERIFY_MANIFEST_PATH:-ops/manifest.json}"
 SMOKE_PATHS="${VERIFY_SMOKE_PATHS:-/}"
 
+EXPECTED_CSP="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://bitter.sh https://app.bitterpass.com https://bitterdesk.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://app.bitterpass.com https://bitter.sh https://bitterdesk.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; upgrade-insecure-requests"
+EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()"
+
 manifest_sha_path() {
   if [ -f "$VERIFY_MANIFEST_PATH" ]; then
     python3 - "$VERIFY_MANIFEST_PATH" <<'PY'
@@ -102,6 +105,69 @@ run_http_check() {
   fi
 }
 
+header_value() {
+  local name="$1"
+  python3 -c 'import sys
+target = sys.argv[1].lower()
+for line in sys.stdin:
+    if ":" not in line:
+        continue
+    name, value = line.split(":", 1)
+    if name.strip().lower() == target:
+        print(value.strip(), end="")
+        break
+' "$name"
+}
+
+assert_header() {
+  local path="$1"
+  local header="$2"
+  local expected="$3"
+  local url="${VERIFY_BASE_URL%/}${path}"
+  local headers
+  local observed
+
+  headers="$(curl -fsSL -o /dev/null -D - "$url" | tr -d '\r')"
+  observed="$(printf '%s' "$headers" | header_value "$header")"
+
+  if [ "$observed" != "$expected" ]; then
+    echo "Unexpected ${header} at ${url}" >&2
+    echo "Expected: ${expected}" >&2
+    echo "Observed: ${observed:-<missing>}" >&2
+    return 1
+  fi
+}
+
+validate_health_body() {
+  local url="$1"
+  local expected_sha="${2:-}"
+
+  curl -fsS "$url" | python3 -c 'import json
+import sys
+
+expected_sha = sys.argv[1]
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    raise SystemExit("health response is not JSON")
+
+checks = {
+    "ok": data.get("ok") is True,
+    "status": data.get("status") == "ok",
+    "service": data.get("service") == "bitterpass.com",
+    "hostname": data.get("hostname") == "bitterpass.com",
+    "secret_material_returned": data.get("secret_material_returned") is False,
+    "release_identity": bool(data.get("git_sha")) and data.get("git_sha") == data.get("release"),
+}
+if expected_sha:
+    checks["expected_git_sha"] = data.get("git_sha") == expected_sha
+
+failed = [name for name, ok in checks.items() if not ok]
+if failed:
+    raise SystemExit("health response failed checks: " + ",".join(failed))
+' "$expected_sha"
+}
+
 HEALTH_PATH="$(manifest_sha_path)"
 
 # When EXPECTED_GIT_SHA is set, poll the declared release-truth path for a JSON response containing the SHA.
@@ -139,6 +205,7 @@ if [ -n "${EXPECTED_GIT_SHA:-}" ]; then
     echo "Timed out waiting for $HEALTH_URL to report git_sha=$EXPECTED_GIT_SHA" >&2
     exit 1
   fi
+  validate_health_body "$HEALTH_URL" "$EXPECTED_GIT_SHA"
 else
   # Static site: poll until the root URL returns HTTP 200
   deadline=$((SECONDS + 60))
@@ -171,6 +238,15 @@ else
     run_http_check "$path" "$path" "200" "3000"
   done
 fi
+
+for path in "/" "$HEALTH_PATH"; do
+  assert_header "$path" "Content-Security-Policy" "$EXPECTED_CSP"
+  assert_header "$path" "Strict-Transport-Security" "max-age=31536000; includeSubDomains"
+  assert_header "$path" "X-Content-Type-Options" "nosniff"
+  assert_header "$path" "X-Frame-Options" "DENY"
+  assert_header "$path" "Referrer-Policy" "strict-origin-when-cross-origin"
+  assert_header "$path" "Permissions-Policy" "$EXPECTED_PERMISSIONS_POLICY"
+done
 
 echo "Running browser smoke tests..."
 PLAYWRIGHT_BASE_URL="${VERIFY_BASE_URL}" npm run qa:smoke

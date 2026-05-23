@@ -1,6 +1,6 @@
 [install]
 minimumReleaseAge = 604800
-minimumReleaseAgeExcludes = ["devalue"]
+minimumReleaseAgeExcludes = ["devalue", "nuxt", "@nuxt/kit", "@nuxt/nitro-server", "@nuxt/schema", "@nuxt/vite-builder", "vue", "vue-router", "ws"]
 auto = "disable"
 frozenLockfile = true
 saveTextLockfile = true

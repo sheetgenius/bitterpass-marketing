@@ -4,13 +4,14 @@ set -euo pipefail
 ARTIFACT_DIR="${WORKCELL_ARTIFACTS_DIR:-test-results/workcell/run-local}"
 BASE_URL="${VERIFY_BASE_URL:-https://bitterpass.com}"
 BASE_URL="${BASE_URL%/}"
+EXPECTED_RELEASE_SHA="${VERIFY_EXPECTED_RELEASE_SHA:-${EXPECTED_GIT_SHA:-}}"
 HTTP_REPORT="${ARTIFACT_DIR}/verify-http.json"
 SMOKE_JSON="${ARTIFACT_DIR}/smoke-screen.json"
 SMOKE_MD="${ARTIFACT_DIR}/SMOKE_SCREEN.md"
 
 mkdir -p "$ARTIFACT_DIR"
 
-python3 - "$BASE_URL" "$ARTIFACT_DIR" "$HTTP_REPORT" "$SMOKE_JSON" "$SMOKE_MD" <<'PY'
+python3 - "$BASE_URL" "$ARTIFACT_DIR" "$HTTP_REPORT" "$SMOKE_JSON" "$SMOKE_MD" "$EXPECTED_RELEASE_SHA" <<'PY'
 import json
 import pathlib
 import sys
@@ -18,7 +19,7 @@ import time
 import urllib.error
 import urllib.request
 
-base_url, artifact_dir, http_report, smoke_json, smoke_md = sys.argv[1:6]
+base_url, artifact_dir, http_report, smoke_json, smoke_md, expected_release_sha = sys.argv[1:7]
 artifact_root = pathlib.Path(artifact_dir)
 checks = []
 failures = []
@@ -95,11 +96,17 @@ except json.JSONDecodeError:
     up_payload = {}
 record("up:ok", up_status == 200 and up_payload.get("ok") is True, status=up_status, artifact_ref=str(up_path))
 record("up:service", up_payload.get("service") == "bitterpass.com", service=up_payload.get("service"), artifact_ref=str(up_path))
+record("up:hostname", up_payload.get("hostname") == "bitterpass.com", hostname=up_payload.get("hostname"), artifact_ref=str(up_path))
+record("up:no_secret_material", up_payload.get("secret_material_returned") is False, artifact_ref=str(up_path))
+record("up:release_identity", bool(up_payload.get("git_sha")) and up_payload.get("git_sha") == up_payload.get("release"), git_sha=up_payload.get("git_sha"), release=up_payload.get("release"), artifact_ref=str(up_path))
+if expected_release_sha:
+    record("up:expected_release", up_payload.get("git_sha") == expected_release_sha, expected=expected_release_sha, observed=up_payload.get("git_sha"), artifact_ref=str(up_path))
 
 report = {
     "schema_version": "bitterpass_marketing.workcell_verify.v1",
     "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     "base_url": base_url,
+    "expected_release_sha": expected_release_sha,
     "responses": responses,
     "checks": checks,
     "result": "failed" if failures else "ok",
@@ -140,7 +147,7 @@ entries = [
         "actor": "operator",
         "entrypoint": "/up/",
         "summary": "Static health probe reports BitterPass marketing service identity.",
-        "proves": ["health_ok", "service_identity"],
+        "proves": ["health_ok", "service_identity", "release_identity", "no_secret_material"],
         "artifact_refs": [str(up_path), http_report],
         "result": "failed" if any(name.startswith("up:") for name in failures) else "ok",
     },
@@ -149,6 +156,7 @@ smoke = {
     "schema_version": "bitterpass_marketing.smoke_screen.v1",
     "generated_at": report["generated_at"],
     "base_url": base_url,
+    "expected_release_sha": expected_release_sha,
     "entries": entries,
     "limitations": [
         "This verification covers the public marketing and setup surfaces only.",
@@ -164,6 +172,7 @@ lines = [
     "",
     f"- Generated: {smoke['generated_at']}",
     f"- Base URL: {base_url}",
+    f"- Expected release SHA: {expected_release_sha or '(not asserted)'}",
     f"- Result: {smoke['result']}",
     "",
 ]
