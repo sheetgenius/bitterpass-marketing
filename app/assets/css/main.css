@@ -418,7 +418,7 @@ section[id] {
   gap: 0.5rem;
   padding: 0.6rem 1rem;
   background: var(--color-accent);
-  color: #fffaf2;
+  color: var(--color-bg);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.18em;
@@ -429,7 +429,7 @@ section[id] {
 .btn-primary:hover {
   background: var(--color-accent-dim);
   border-color: var(--color-accent-dim);
-  color: #fffaf2;
+  color: var(--color-bg);
 }
 
 .btn-ghost {
