@@ -13,6 +13,10 @@ require "zlib"
 class RadicchioCli
   DEFAULT_MANIFEST = "radicchio.json"
   ALLOWED_EXTENSIONS = ["", *%w[.html .css .js .json .txt .xml .svg .ico .png .jpg .jpeg .gif .webp .woff .woff2 .ttf .eot .webmanifest .mjs .wasm]].freeze
+  # Cloudflare Pages control files (no extension) are not part of the Radicchio
+  # publish contract; the API rejects them and aborts the whole deploy. Skip
+  # them so the bundle still publishes (edge headers are configured elsewhere).
+  SKIP_BASENAMES = %w[_headers _redirects].freeze
   GZIP_THRESHOLD = 512 * 1024 # compress request bodies > 512 KB
 
   def initialize(argv)
@@ -184,6 +188,7 @@ class RadicchioCli
       full = output_dir.join(relative)
       next unless full.file?
       next if relative.start_with?(".")
+      next if SKIP_BASENAMES.include?(full.basename.to_s)
       next unless ALLOWED_EXTENSIONS.include?(full.extname.downcase)
 
       bytes = full.binread
