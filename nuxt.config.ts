@@ -49,8 +49,8 @@ export default defineNuxtConfig({
             'Operator-approved credentials for teams replacing broad service accounts, copied env vars, and unauditable bot access when agents touch real systems.',
         },
         { name: 'color-scheme', content: 'light dark' },
-        { name: 'theme-color', content: '#f3eee5', media: '(prefers-color-scheme: light)' },
-        { name: 'theme-color', content: '#0d0c10', media: '(prefers-color-scheme: dark)' },
+        { name: 'theme-color', content: '#fff7f5', media: '(prefers-color-scheme: light)' },
+        { name: 'theme-color', content: '#080909', media: '(prefers-color-scheme: dark)' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -78,7 +78,7 @@ export default defineNuxtConfig({
           key: 'theme-init',
           tagPosition: 'head',
           innerHTML:
-            "(function(){try{var url=new URL(window.location.href);var qp=url.searchParams.get('theme');if(qp==='light'||qp==='dark'){document.documentElement.dataset.theme=qp;return;}var stored=window.localStorage.getItem('bitterpass-theme');if(stored==='light'||stored==='dark'){document.documentElement.dataset.theme=stored;}else{document.documentElement.dataset.theme=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}}catch(_){document.documentElement.dataset.theme='light';}})();",
+            "(function(){try{var url=new URL(window.location.href);var qp=url.searchParams.get('theme');if(qp==='light'||qp==='dark'){document.documentElement.dataset.theme=qp;return;}var stored=window.localStorage.getItem('bitterpass-theme');if(stored==='light'||stored==='dark'){document.documentElement.dataset.theme=stored;}else{document.documentElement.dataset.theme='dark';}}catch(_){document.documentElement.dataset.theme='dark';}})();",
         },
       ],
     },

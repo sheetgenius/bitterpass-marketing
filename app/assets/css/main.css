@@ -1,41 +1,53 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #f3eee5;
-  --color-panel: #faf5eb;
-  --color-panel-strong: #ece4d2;
-  --color-line: #d4c8b1;
-  --color-line-strong: #b9a982;
-  --color-fg: #1a1722;
-  --color-muted: #6e6478;
-  --color-muted-strong: #41384c;
-  --color-accent: #5b3aa6;
-  --color-accent-dim: #422786;
+  --color-bg: #080909;
+  --color-panel: #121010;
+  --color-panel-strong: #1b1515;
+  --color-line: #352524;
+  --color-line-strong: #5b3936;
+  --color-fg: #fff0ee;
+  --color-muted: #a28b88;
+  --color-muted-strong: #e5cbc6;
+  --color-accent: #ff9a8f;
+  --color-accent-dim: #d97870;
   --color-positive: #2d6c5c;
   --color-warn: #b3523a;
 
-  --font-sans: "Space Grotesk", "ui-sans-serif", "system-ui", "sans-serif";
+  --bitter-accent-pass: #ff9a8f;
+  --font-sans: "Manrope", "ui-sans-serif", "system-ui", "sans-serif";
   --font-mono: "IBM Plex Mono", "ui-monospace", "Menlo", "monospace";
 
   --tracking-brand: 0.24em;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+  --color-bg: #080909;
+  --color-panel: #121010;
+  --color-panel-strong: #1b1515;
+  --color-line: #352524;
+  --color-line-strong: #5b3936;
+  --color-fg: #fff0ee;
+  --color-muted: #a28b88;
+  --color-muted-strong: #e5cbc6;
+  --color-accent: var(--bitter-accent-pass, #ff9a8f);
+  --color-accent-dim: #d97870;
+  --color-positive: #9fd2c2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #0d0c10;
-    --color-panel: #131119;
-    --color-panel-strong: #1a1822;
-    --color-line: #2a2734;
-    --color-line-strong: #3f3a4f;
-    --color-fg: #ece6f5;
-    --color-muted: #8a829a;
-    --color-muted-strong: #cabfde;
-    --color-accent: #b69bff;
-    --color-accent-dim: #9b7aff;
+    --color-bg: #080909;
+    --color-panel: #121010;
+    --color-panel-strong: #1b1515;
+    --color-line: #352524;
+    --color-line-strong: #5b3936;
+    --color-fg: #fff0ee;
+    --color-muted: #a28b88;
+    --color-muted-strong: #e5cbc6;
+    --color-accent: var(--bitter-accent-pass, #ff9a8f);
+    --color-accent-dim: #d97870;
     --color-positive: #6bb39f;
     --color-warn: #df8b6f;
     color-scheme: dark;
@@ -43,16 +55,16 @@
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #0d0c10;
-  --color-panel: #131119;
-  --color-panel-strong: #1a1822;
-  --color-line: #2a2734;
-  --color-line-strong: #3f3a4f;
-  --color-fg: #ece6f5;
-  --color-muted: #8a829a;
-  --color-muted-strong: #cabfde;
-  --color-accent: #b69bff;
-  --color-accent-dim: #9b7aff;
+  --color-bg: #080909;
+  --color-panel: #121010;
+  --color-panel-strong: #1b1515;
+  --color-line: #352524;
+  --color-line-strong: #5b3936;
+  --color-fg: #fff0ee;
+  --color-muted: #a28b88;
+  --color-muted-strong: #e5cbc6;
+  --color-accent: var(--bitter-accent-pass, #ff9a8f);
+  --color-accent-dim: #d97870;
   --color-positive: #6bb39f;
   --color-warn: #df8b6f;
   color-scheme: dark;
@@ -60,12 +72,22 @@
 
 :root[data-theme="light"] {
   color-scheme: light;
+  --color-bg: #fff7f5;
+  --color-panel: #ffffff;
+  --color-panel-strong: #fff0ee;
+  --color-line: #ead1cd;
+  --color-line-strong: #d1a7a0;
+  --color-fg: #211716;
+  --color-muted: #76635f;
+  --color-muted-strong: #46332f;
+  --color-accent: #b65f58;
+  --color-accent-dim: #984b45;
 }
 
 html {
   background:
-    radial-gradient(circle at 12% 8%, rgba(91, 58, 166, 0.08), transparent 28%),
-    radial-gradient(circle at 88% 92%, rgba(45, 108, 92, 0.06), transparent 32%),
+    radial-gradient(circle at 12% 8%, rgba(255, 154, 143, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 92%, rgba(159, 210, 194, 0.04), transparent 32%),
     var(--color-bg);
   color: var(--color-fg);
   font-family: var(--font-sans);
@@ -77,13 +99,14 @@ html {
 :root[data-theme="dark"] html,
 html[data-theme="dark"] {
   background:
-    radial-gradient(circle at 12% 8%, rgba(155, 122, 255, 0.10), transparent 30%),
-    radial-gradient(circle at 88% 92%, rgba(107, 179, 159, 0.05), transparent 34%),
+    radial-gradient(circle at 12% 8%, rgba(255, 154, 143, 0.10), transparent 30%),
+    radial-gradient(circle at 88% 92%, rgba(159, 210, 194, 0.05), transparent 34%),
     var(--color-bg);
 }
 
 body {
   min-height: 100vh;
+  margin: 0;
 }
 
 ::selection {
@@ -158,7 +181,8 @@ section[id] {
 
 .hero-orb {
   pointer-events: none;
-  opacity: 0.72;
+  display: none;
+  opacity: 0;
 }
 
 .hero-orb-a {
@@ -182,8 +206,17 @@ section[id] {
   width: min(80vw, 64rem);
   aspect-ratio: 1 / 1;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.34;
   filter: contrast(1.05);
+}
+
+@media (max-width: 720px) {
+  .vault-dial {
+    opacity: 0.18;
+    right: -45vw;
+    top: 8rem;
+    width: 115vw;
+  }
 }
 
 .vault-dial__ring {
@@ -425,6 +458,7 @@ section[id] {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   border: 1px solid var(--color-accent);
+  border-radius: 6px;
 }
 
 .btn-primary:hover {
@@ -445,6 +479,7 @@ section[id] {
   text-transform: uppercase;
   color: var(--color-muted-strong);
   border: 1px solid transparent;
+  border-radius: 6px;
 }
 
 .btn-ghost:hover {
@@ -463,6 +498,7 @@ section[id] {
   text-transform: uppercase;
   color: var(--color-muted-strong);
   border: 1px solid color-mix(in srgb, var(--color-line-strong) 80%, transparent);
+  border-radius: 6px;
 }
 
 .btn-outline:hover {

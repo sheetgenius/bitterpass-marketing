@@ -239,7 +239,7 @@ onMounted(() => {
   const root = document.documentElement
   const currentTheme = () =>
     root.dataset.theme ||
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    'dark'
   const applyLabel = () => {
     button.textContent = currentTheme() === 'dark' ? 'Light mode' : 'Dark mode'
   }
@@ -305,21 +305,21 @@ onMounted(() => {
         class="relative mx-auto grid max-w-6xl gap-14 px-6 py-24 md:grid-cols-[1.08fr_0.92fr] md:py-32"
       >
         <div>
-          <p class="section-index">00 / Operator-approved credentials for agents</p>
+          <p class="section-index">00 / CLI and MCP credential handles</p>
           <h1
             class="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight md:text-7xl"
           >
             A credentials vault for operators running agents.
           </h1>
           <p class="mt-8 max-w-3xl text-lg leading-relaxed text-muted-strong md:text-xl">
-            BitterPass is for teams whose agents touch production APIs, cloud consoles,
+            BitterPass is for teams whose agents and MCP tools touch production APIs, cloud consoles,
             billing systems, and internal control planes. It replaces broad service
             accounts, copied env vars, and unauditable bot access with human approval,
             per-run scope, and replayable audit.
           </p>
           <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
-            Passkeys gate humans. Ed25519 identities gate runners. The service stores
-            ciphertext, metadata, and audit instead of a vendor-held root secret.
+            Passkeys gate humans. Ed25519 identities gate CLI and MCP runners. The service
+            stores ciphertext, metadata, and audit instead of a vendor-held root secret.
           </p>
 
           <div class="mt-10 flex flex-wrap items-center gap-3">
