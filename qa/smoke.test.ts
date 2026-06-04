@@ -19,6 +19,13 @@ test("home page exposes the support link to bitterdesk.com", async ({ page }) =>
   await expect(supportLink).toBeVisible();
 });
 
+test("home page exposes the public source repository", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.locator('a[href="https://github.com/sheetgenius/bitterpass-marketing"]').first(),
+  ).toBeVisible();
+});
+
 test("home page explains the post-request path", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText(/What happens next/i)).toBeVisible();
@@ -64,6 +71,7 @@ test("home page exposes search and authority proof metadata", async ({ page }) =
   const jsonLd = (await page.locator('script[type="application/ld+json"]').allTextContents()).join("\n");
   expect(jsonLd).toContain('"SoftwareApplication"');
   expect(jsonLd).toContain('"FAQPage"');
+  expect(jsonLd).toContain("https://github.com/sheetgenius/bitterpass-marketing");
   expect(jsonLd).toContain("Operator-approved credentials for agents with scoped, expiring, revocable, auditable access.");
 
   await expect(page.getByRole("heading", { name: /Buyer questions before a runner/i })).toBeVisible();
@@ -117,6 +125,7 @@ test("public crawler and markdown routes mirror the product boundary", async ({ 
   body = await response.text();
   expect(body).toContain("Claim Ledger");
   expect(body).toContain("CTA Truth");
+  expect(body).toContain("https://github.com/sheetgenius/bitterpass-marketing");
 
   response = await request.get("/index.md");
   expect(response.status()).toBe(200);

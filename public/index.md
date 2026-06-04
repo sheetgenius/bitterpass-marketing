@@ -55,3 +55,4 @@ require an approved proof packet before they are stated publicly.
 - Health and release identity: https://bitterpass.com/up/
 - AI crawler index: https://bitterpass.com/llms.txt
 - Full AI context: https://bitterpass.com/llms-full.txt
+- Public source: https://github.com/sheetgenius/bitterpass-marketing

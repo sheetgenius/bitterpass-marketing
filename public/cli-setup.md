@@ -33,3 +33,4 @@ values, or support/debug payloads here.
 - Home: https://bitterpass.com/
 - BitterPass Console: https://app.bitterpass.com/
 - Access requests and support: https://bitterdesk.com/
+- Public source: https://github.com/sheetgenius/bitterpass-marketing

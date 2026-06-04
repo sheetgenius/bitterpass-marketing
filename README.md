@@ -85,6 +85,8 @@ public marketing repository.
 - AI crawler entry points:
   [llms.txt](https://bitterpass.com/llms.txt),
   [llms-full.txt](https://bitterpass.com/llms-full.txt)
+- Public source:
+  [github.com/sheetgenius/bitterpass-marketing](https://github.com/sheetgenius/bitterpass-marketing)
 - Public change history: [CHANGELOG.md](CHANGELOG.md)
 - Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 - Security and public boundary: [SECURITY.md](SECURITY.md)
@@ -96,11 +98,11 @@ public marketing repository.
 BitterPass's public marketing site is deployed on BitterGrid as the
 `bitterpass.com` service and served as a Radicchio/static site.
 
-Current verified state before this source-shape pass:
+Current verified state refreshed on 2026-06-04:
 
 - service key: `bitterpass.com`
 - GitHub source: `sheetgenius/bitterpass-marketing`
-- active release SHA: `edb9a0b3c1107a550f05bc8cfdf87dfdf2c0c643`
+- active release SHA: `a13653e4c519f1bafe991fdf5437a50839fe31c1`
 - deployment status: `ready`
 - verification status: `passed`
 - health path: `/up/`

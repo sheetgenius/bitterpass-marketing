@@ -229,6 +229,7 @@ const expect = [
           <a href="https://app.bitterpass.com" class="transition hover:text-fg">Console</a>
           <NuxtLink to="/#spec" class="transition hover:text-fg">Spec</NuxtLink>
           <NuxtLink to="/cli-setup" class="transition hover:text-fg">CLI setup</NuxtLink>
+          <a href="https://github.com/sheetgenius/bitterpass-marketing" class="transition hover:text-fg">Source</a>
           <a href="https://bitterdesk.com" class="transition hover:text-fg">Support</a>
           <NuxtLink to="/#access" class="transition hover:text-fg">Request access</NuxtLink>
         </div>

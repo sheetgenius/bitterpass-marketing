@@ -116,6 +116,14 @@ Final live verification after the receipt commit should repeat the Grid wait,
 source check, workcell verify, and postdeploy verify so `/up/` reports the
 receipt commit itself.
 
+Follow-up consistency pass:
+
+- GitHub reports `sheetgenius/bitterpass-marketing` as public.
+- Live `/up/` on 2026-06-04 reports matching `git_sha` and `release` at
+  `a13653e4c519f1bafe991fdf5437a50839fe31c1`.
+- Added the public source link to the footer, JSON-LD, Markdown mirrors,
+  `llms.txt`, `llms-full.txt`, README, changelog, and smoke tests.
+
 ## Reviewer And Grounding Notes
 
 X-High findings used:

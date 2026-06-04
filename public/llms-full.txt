@@ -84,3 +84,4 @@ identity, scoped material, and receipts before the first production pull.
 - Sitemap: https://bitterpass.com/sitemap.xml
 - Robots: https://bitterpass.com/robots.txt
 - AI index: https://bitterpass.com/llms.txt
+- Public source repository: https://github.com/sheetgenius/bitterpass-marketing

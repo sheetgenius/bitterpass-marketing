@@ -19,6 +19,7 @@ planes.
 - Health and release identity: https://bitterpass.com/up/
 - Sitemap: https://bitterpass.com/sitemap.xml
 - Full AI-readable context: https://bitterpass.com/llms-full.txt
+- Public source repository: https://github.com/sheetgenius/bitterpass-marketing
 
 ## Current CTA Truth
 

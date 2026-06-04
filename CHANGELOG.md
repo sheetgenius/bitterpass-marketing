@@ -65,3 +65,5 @@ under a dated entry.
 - Kept detailed CLI commands, pairing steps, customer onboarding packets,
   recovery material, credential values, and private support/debug material out
   of the public repository.
+- Added the public GitHub source link to the site footer, Markdown mirrors,
+  LLM discovery files, and smoke coverage now that the repository is public.

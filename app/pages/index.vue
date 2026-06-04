@@ -208,6 +208,7 @@ useHead({
           applicationCategory: 'SecurityApplication',
           operatingSystem: 'Web, CLI',
           url: 'https://bitterpass.com/',
+          sameAs: ['https://github.com/sheetgenius/bitterpass-marketing'],
           description:
             'Operator-approved credentials for agents with scoped, expiring, revocable, auditable access.',
           publisher: {
@@ -644,6 +645,7 @@ onMounted(() => {
           <a href="https://app.bitterpass.com" class="transition hover:text-fg">Console</a>
           <a href="#spec" class="transition hover:text-fg">Spec</a>
           <NuxtLink to="/cli-setup" class="transition hover:text-fg">CLI setup</NuxtLink>
+          <a href="https://github.com/sheetgenius/bitterpass-marketing" class="transition hover:text-fg">Source</a>
           <a href="https://bitterdesk.com" class="transition hover:text-fg">Support</a>
           <a href="#access" class="transition hover:text-fg">Request access</a>
         </div>
