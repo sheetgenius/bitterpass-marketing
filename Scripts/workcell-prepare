@@ -80,6 +80,7 @@ playwright = pathlib.Path("playwright.config.ts").read_text(encoding="utf-8", er
 smoke = pathlib.Path("qa/smoke.test.ts").read_text(encoding="utf-8", errors="replace")
 static_headers = pathlib.Path("public/_headers").read_text(encoding="utf-8", errors="replace")
 health_writer = pathlib.Path("Scripts/write-health.ts").read_text(encoding="utf-8", errors="replace")
+radicchio_helper = pathlib.Path("Scripts/radicchio").read_text(encoding="utf-8", errors="replace")
 
 scripts = package.get("scripts", {})
 radicchio_build = radicchio.get("build", {})
@@ -135,6 +136,10 @@ checks = [
     {
         "name": "public_reader_files",
         "result": "ok" if pathlib.Path("public/index.md").is_file() and pathlib.Path("public/cli-setup.md").is_file() and pathlib.Path("public/llms.txt").is_file() and pathlib.Path("public/llms-full.txt").is_file() and "BitterPass" in pathlib.Path("public/index.md").read_text(encoding="utf-8", errors="replace") else "failed",
+    },
+    {
+        "name": "radicchio_markdown_payload",
+        "result": "ok" if ".md" in radicchio_helper else "failed",
     },
     {
         "name": "health_writer",

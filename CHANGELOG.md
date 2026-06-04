@@ -49,6 +49,8 @@ under a dated entry.
 - Aligned static header expectations with the current Radicchio edge baseline:
   HSTS, nosniff, referrer policy, `X-Frame-Options: SAMEORIGIN`, and the short
   camera/microphone/geolocation permissions policy.
+- Added Markdown files to the Radicchio deploy payload allowlist so public
+  Markdown twins publish with the rest of the static site.
 
 ### Repository Metadata
 

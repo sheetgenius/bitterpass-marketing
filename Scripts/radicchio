@@ -12,7 +12,7 @@ require "zlib"
 
 class RadicchioCli
   DEFAULT_MANIFEST = "radicchio.json"
-  ALLOWED_EXTENSIONS = ["", *%w[.html .css .js .json .txt .xml .svg .ico .png .jpg .jpeg .gif .webp .woff .woff2 .ttf .eot .webmanifest .mjs .wasm]].freeze
+  ALLOWED_EXTENSIONS = ["", *%w[.html .css .js .json .txt .xml .md .svg .ico .png .jpg .jpeg .gif .webp .woff .woff2 .ttf .eot .webmanifest .mjs .wasm]].freeze
   # Cloudflare Pages control files (no extension) are not part of the Radicchio
   # publish contract; the API rejects them and aborts the whole deploy. Skip
   # them so the bundle still publishes (edge headers are configured elsewhere).
