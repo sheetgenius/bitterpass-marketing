@@ -102,7 +102,8 @@ Current verified state refreshed on 2026-06-04:
 
 - service key: `bitterpass.com`
 - GitHub source: `sheetgenius/bitterpass-marketing`
-- active release SHA: `a13653e4c519f1bafe991fdf5437a50839fe31c1`
+- release identity: `https://bitterpass.com/up/` is authoritative and should
+  report matching `git_sha` and `release` values for the deployed commit
 - deployment status: `ready`
 - verification status: `passed`
 - health path: `/up/`

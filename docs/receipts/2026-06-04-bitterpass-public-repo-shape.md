@@ -119,8 +119,9 @@ receipt commit itself.
 Follow-up consistency pass:
 
 - GitHub reports `sheetgenius/bitterpass-marketing` as public.
-- Live `/up/` on 2026-06-04 reports matching `git_sha` and `release` at
-  `a13653e4c519f1bafe991fdf5437a50839fe31c1`.
+- Live `/up/` is the authoritative release identity path. During this
+  source-link pass it reported matching `git_sha` and `release` at
+  `646ff41cd2fa400bc01656292764a1b3190e1d61`.
 - Added the public source link to the footer, JSON-LD, Markdown mirrors,
   `llms.txt`, `llms-full.txt`, README, changelog, and smoke tests.
 
