@@ -105,24 +105,28 @@ test("account paths bridge to Bitter account surfaces", async ({ page }) => {
   );
 });
 
-test("public crawler and markdown routes mirror the product boundary", async ({ page }) => {
-  let response = await page.goto("/llms.txt");
-  expect(response?.status()).toBe(200);
-  await expect(page.locator("body")).toContainText("Marketing surface only");
-  await expect(page.locator("body")).toContainText("app.bitterpass.com");
+test("public crawler and markdown routes mirror the product boundary", async ({ request }) => {
+  let response = await request.get("/llms.txt");
+  expect(response.status()).toBe(200);
+  let body = await response.text();
+  expect(body).toContain("Marketing surface only");
+  expect(body).toContain("app.bitterpass.com");
 
-  response = await page.goto("/llms-full.txt");
-  expect(response?.status()).toBe(200);
-  await expect(page.locator("body")).toContainText("Claim Ledger");
-  await expect(page.locator("body")).toContainText("CTA Truth");
+  response = await request.get("/llms-full.txt");
+  expect(response.status()).toBe(200);
+  body = await response.text();
+  expect(body).toContain("Claim Ledger");
+  expect(body).toContain("CTA Truth");
 
-  response = await page.goto("/index.md");
-  expect(response?.status()).toBe(200);
-  await expect(page.locator("body")).toContainText("operator-approved credential authority");
-  await expect(page.locator("body")).toContainText("custody boundary");
+  response = await request.get("/index.md");
+  expect(response.status()).toBe(200);
+  body = await response.text();
+  expect(body).toContain("operator-approved credential authority");
+  expect(body).toMatch(/custody\s+boundary/);
 
-  response = await page.goto("/cli-setup.md");
-  expect(response?.status()).toBe(200);
-  await expect(page.locator("body")).toContainText("invitation-gated");
-  await expect(page.locator("body")).toContainText("runner identity");
+  response = await request.get("/cli-setup.md");
+  expect(response.status()).toBe(200);
+  body = await response.text();
+  expect(body).toContain("invitation-gated");
+  expect(body).toContain("runner identity");
 });
