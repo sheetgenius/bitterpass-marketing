@@ -2,10 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://bitterpass.com/</loc>
-    <lastmod>2026-05-05</lastmod>
+    <lastmod>2026-06-04</lastmod>
   </url>
   <url>
     <loc>https://bitterpass.com/cli-setup/</loc>
-    <lastmod>2026-05-05</lastmod>
+    <lastmod>2026-06-04</lastmod>
+  </url>
+  <url>
+    <loc>https://bitterpass.com/index.md</loc>
+    <lastmod>2026-06-04</lastmod>
+  </url>
+  <url>
+    <loc>https://bitterpass.com/cli-setup.md</loc>
+    <lastmod>2026-06-04</lastmod>
+  </url>
+  <url>
+    <loc>https://bitterpass.com/llms.txt</loc>
+    <lastmod>2026-06-04</lastmod>
+  </url>
+  <url>
+    <loc>https://bitterpass.com/llms-full.txt</loc>
+    <lastmod>2026-06-04</lastmod>
   </url>
 </urlset>

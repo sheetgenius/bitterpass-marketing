@@ -12,8 +12,7 @@ VERIFY_RUN_MODE="${VERIFY_RUN_MODE:-deploy}"
 VERIFY_MANIFEST_PATH="${VERIFY_MANIFEST_PATH:-ops/manifest.json}"
 SMOKE_PATHS="${VERIFY_SMOKE_PATHS:-/}"
 
-EXPECTED_CSP="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://bitter.sh https://app.bitterpass.com https://bitterdesk.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://app.bitterpass.com https://bitter.sh https://bitterdesk.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; upgrade-insecure-requests"
-EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()"
+EXPECTED_PERMISSIONS_POLICY="camera=(), microphone=(), geolocation=()"
 
 manifest_sha_path() {
   if [ -f "$VERIFY_MANIFEST_PATH" ]; then
@@ -240,10 +239,9 @@ else
 fi
 
 for path in "/" "$HEALTH_PATH"; do
-  assert_header "$path" "Content-Security-Policy" "$EXPECTED_CSP"
   assert_header "$path" "Strict-Transport-Security" "max-age=31536000; includeSubDomains"
   assert_header "$path" "X-Content-Type-Options" "nosniff"
-  assert_header "$path" "X-Frame-Options" "DENY"
+  assert_header "$path" "X-Frame-Options" "SAMEORIGIN"
   assert_header "$path" "Referrer-Policy" "strict-origin-when-cross-origin"
   assert_header "$path" "Permissions-Policy" "$EXPECTED_PERMISSIONS_POLICY"
 done

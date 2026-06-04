@@ -70,6 +70,12 @@ root_status, root, root_path = fetch("root", "/")
 cli_status, cli, cli_path = fetch("cli_setup", "/cli-setup/")
 login_status, login, login_path = fetch("login", "/login")
 signup_status, signup, signup_path = fetch("signup", "/signup")
+robots_status, robots, robots_path = fetch("robots", "/robots.txt")
+sitemap_status, sitemap, sitemap_path = fetch("sitemap", "/sitemap.xml")
+llms_status, llms, llms_path = fetch("llms", "/llms.txt")
+llms_full_status, llms_full, llms_full_path = fetch("llms_full", "/llms-full.txt")
+index_md_status, index_md, index_md_path = fetch("index_md", "/index.md")
+cli_md_status, cli_md, cli_md_path = fetch("cli_setup_md", "/cli-setup.md")
 up_status, up_text, up_path = fetch("up", "/up/")
 
 record("root:status", root_status == 200, status=root_status, artifact_ref=str(root_path))
@@ -89,6 +95,19 @@ record("login:account_request", "https://bitter.sh/signup" in login, artifact_re
 
 record("signup:status", signup_status == 200, status=signup_status, artifact_ref=str(signup_path))
 record("signup:no_local_signup", "There is no BitterPass-only signup path" in signup and "https://bitter.sh/signup" in signup, artifact_ref=str(signup_path))
+
+record("robots:status", robots_status == 200, status=robots_status, artifact_ref=str(robots_path))
+record("robots:sitemap", "Sitemap: https://bitterpass.com/sitemap.xml" in robots, artifact_ref=str(robots_path))
+record("sitemap:status", sitemap_status == 200, status=sitemap_status, artifact_ref=str(sitemap_path))
+record("sitemap:public_routes", "https://bitterpass.com/" in sitemap and "https://bitterpass.com/cli-setup/" in sitemap and "https://bitterpass.com/index.md" in sitemap, artifact_ref=str(sitemap_path))
+record("llms:status", llms_status == 200, status=llms_status, artifact_ref=str(llms_path))
+record("llms:truth_boundary", "Marketing surface only" in llms and "app.bitterpass.com" in llms, artifact_ref=str(llms_path))
+record("llms_full:status", llms_full_status == 200, status=llms_full_status, artifact_ref=str(llms_full_path))
+record("llms_full:story_gate", "Claim ledger" in llms_full and "CTA truth" in llms_full, artifact_ref=str(llms_full_path))
+record("index_md:status", index_md_status == 200, status=index_md_status, artifact_ref=str(index_md_path))
+record("index_md:copy", "operator-approved credential authority" in index_md and "custody boundary" in index_md, artifact_ref=str(index_md_path))
+record("cli_md:status", cli_md_status == 200, status=cli_md_status, artifact_ref=str(cli_md_path))
+record("cli_md:copy", "invitation-gated" in cli_md and "runner identity" in cli_md, artifact_ref=str(cli_md_path))
 
 try:
     up_payload = json.loads(up_text)
@@ -141,6 +160,15 @@ entries = [
         "proves": ["login_http_200", "signup_http_200", "console_login", "no_local_signup"],
         "artifact_refs": [str(login_path), str(signup_path), http_report],
         "result": "failed" if any(name.startswith(("login:", "signup:")) for name in failures) else "ok",
+    },
+    {
+        "key": "public.reader_artifacts",
+        "actor": "crawler_or_agent",
+        "entrypoint": "/robots.txt, /sitemap.xml, /llms.txt, /llms-full.txt, /index.md, /cli-setup.md",
+        "summary": "Crawler and agent-readable artifacts mirror the public story gate and marketing-only boundary.",
+        "proves": ["robots", "sitemap", "llms", "markdown_twins"],
+        "artifact_refs": [str(robots_path), str(sitemap_path), str(llms_path), str(llms_full_path), str(index_md_path), str(cli_md_path), http_report],
+        "result": "failed" if any(name.startswith(("robots:", "sitemap:", "llms:", "llms_full:", "index_md:", "cli_md:")) for name in failures) else "ok",
     },
     {
         "key": "runtime.health_probe",

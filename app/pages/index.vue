@@ -2,7 +2,7 @@
 useSeoMeta({
   title: 'BitterPass — Operator-approved credentials for agents',
   description:
-    'BitterPass is an operator-approved credentials vault for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
+    'BitterPass is an operator-approved credential authority for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
 })
 
 const tumblerCount = 24
@@ -20,8 +20,8 @@ const proofPoints = [
     body: 'Each runner uses its own Ed25519 identity and receives one scoped bundle per run.',
   },
   {
-    label: 'Replayable audit',
-    body: 'Reads, writes, and rotations land in a hash-linked chain you can inspect later.',
+    label: 'Replayable receipts',
+    body: 'Approvals, scoped pulls, expiry, and revocation leave receipts an operator can review later.',
   },
 ]
 
@@ -29,7 +29,7 @@ const failureModes = [
   'Agents inherit credentials that were meant for a human at a shell.',
   'One service account ends up with standing access to too many systems.',
   'There is no durable record of which agent saw which secret, and when.',
-  'Recovery depends on vendor custody instead of an operator-controlled kit.',
+  'Recovery rules are unclear enough that the operator cannot prove what they hold.',
 ]
 
 const contract = [
@@ -44,9 +44,9 @@ const contract = [
       'A runner receives the material for that run, not a permanent token that quietly becomes infrastructure.',
   },
   {
-    label: 'Ciphertext on the service',
+    label: 'Custody proof before use',
     body:
-      'The service stores envelopes, metadata, and audit. The root secret stays with the operator, not the vendor.',
+      'The public contract is sealed state, metadata, and audit. Approved onboarding must prove which material stays operator-held before a runner uses it.',
   },
 ]
 
@@ -59,9 +59,9 @@ const flow = [
   },
   {
     index: '02',
-    title: 'The service stores sealed state only.',
+    title: 'The custody boundary is proven before use.',
     body:
-      'Records arrive as ciphertext envelopes with audit metadata. Storage and sync work without asking the service to hold plaintext.',
+      'Public marketing keeps the claim narrow: BitterPass is built around sealed state, metadata, and audit. The approved onboarding path proves which material is operator-held before any runner receives a bundle.',
   },
   {
     index: '03',
@@ -82,7 +82,7 @@ const surfaces = [
   },
   {
     label: 'Service posture',
-    body: 'Ciphertext, metadata, and recovery artifacts only. No vendor-held root secret.',
+    body: 'Sealed state, metadata, audit receipts, and an onboarding proof for what the service can and cannot hold.',
   },
 ]
 
@@ -93,8 +93,8 @@ const inside = [
   { label: 'Human gateway', value: 'WebAuthn passkey, no shared password or email login' },
   { label: 'Storage shape', value: 'Two-phase atomic mirror writes with no silent partial state' },
   { label: 'Audit', value: 'Append-only chain, hash-linked, locally first and mirrored second' },
-  { label: 'Recovery', value: 'Operator-held paper recovery code plus sealed recovery package' },
-  { label: 'Hosting', value: 'Independent failure domain, separate from Factory and BitterGrid' },
+  { label: 'Recovery', value: 'Operator-held recovery material is invitation-gated, not published in marketing' },
+  { label: 'Hosting', value: 'Marketing root is Grid-managed Radicchio; console and API live on separate BitterPass surfaces' },
 ]
 
 const audiences = [
@@ -114,7 +114,7 @@ const audiences = [
     eyebrow: 'Small technical team',
     title: 'You want per-human and per-run identity without ceremony sprawl.',
     body:
-      'Passkeys for people. Ed25519 identities for runners. Recovery that does not depend on a vendor holding the root of trust.',
+      'Passkeys for people. Ed25519 identities for runners. A custody proof before production credential material enters a pilot.',
   },
 ]
 
@@ -309,17 +309,18 @@ onMounted(() => {
           <h1
             class="mt-6 max-w-3xl text-5xl font-semibold leading-[0.98] tracking-tight md:text-7xl"
           >
-            A credentials vault for operators running agents.
+            Credential authority for operators running agents.
           </h1>
           <p class="mt-8 max-w-3xl text-lg leading-relaxed text-muted-strong md:text-xl">
             BitterPass is for teams whose agents and MCP tools touch production APIs, cloud consoles,
             billing systems, and internal control planes. It replaces broad service
             accounts, copied env vars, and unauditable bot access with human approval,
-            per-run scope, and replayable audit.
+            per-run scope, revocation, and receipts.
           </p>
           <p class="mt-4 max-w-2xl text-lg leading-relaxed text-muted">
-            Passkeys gate humans. Ed25519 identities gate CLI and MCP runners. The service
-            stores ciphertext, metadata, and audit instead of a vendor-held root secret.
+            Passkeys gate humans. Ed25519 identities gate CLI and MCP runners. The approved
+            onboarding path proves the custody boundary before a runner receives production
+            credential material.
           </p>
 
           <div class="mt-10 flex flex-wrap items-center gap-3">
@@ -401,9 +402,9 @@ onMounted(() => {
           Three boundaries, one vault.
         </h2>
         <p class="mt-6 max-w-2xl text-lg leading-relaxed text-muted-strong">
-          The plaintext lives only between the operator-controlled secret material and
-          the run that needs it. Everything in between is passkeys, signatures,
-          ciphertext, and audit.
+          The product contract is not "trust the marketing page." It is a bounded
+          onboarding proof: operator approval, runner identity, scoped material, and
+          receipts before the first production pull.
         </p>
 
         <div class="mt-14 grid gap-10 md:grid-cols-3 md:gap-12">

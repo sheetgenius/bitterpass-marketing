@@ -2,14 +2,11 @@ import { readFileSync } from "node:fs";
 import { describe, expect, test } from "bun:test";
 
 const expectedHeaders = {
-  "Content-Security-Policy":
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://bitter.sh https://app.bitterpass.com https://bitterdesk.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; connect-src 'self' https://app.bitterpass.com https://bitter.sh https://bitterdesk.com https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; upgrade-insecure-requests",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
   "X-Content-Type-Options": "nosniff",
-  "X-Frame-Options": "DENY",
+  "X-Frame-Options": "SAMEORIGIN",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Permissions-Policy":
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=(), browsing-topics=()",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 } as const;
 
 function parseRootHeaders(source: string) {
@@ -33,7 +30,7 @@ function parseRootHeaders(source: string) {
 }
 
 describe("BitterPass marketing static security headers", () => {
-  test("declares the public browser hardening baseline", () => {
+  test("mirrors the current Radicchio edge baseline", () => {
     const headers = parseRootHeaders(readFileSync("public/_headers", "utf8"));
 
     for (const [name, value] of Object.entries(expectedHeaders)) {

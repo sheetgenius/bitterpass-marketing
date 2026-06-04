@@ -26,7 +26,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'BitterPass is an operator-approved credentials vault for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
+            'BitterPass is an operator-approved credential authority for teams whose agents touch production APIs, cloud consoles, billing systems, and internal control planes.',
         },
         { property: 'og:title', content: 'BitterPass — Operator-approved credentials for agents' },
         {
@@ -60,6 +60,7 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap',
         },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+        { rel: 'alternate', type: 'text/markdown', href: 'https://bitterpass.com/index.md' },
       ],
       script: [
         {

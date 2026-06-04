@@ -74,6 +74,7 @@ test("home page keeps Atlas authority framing instead of consumer password-manag
   await page.goto("/");
   await expect(page.getByText(/scoped bundles, expiry, revocation, and receipts/i)).toBeVisible();
   await expect(page.getByText(/There is no self-serve signup queue or static form endpoint/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Credential authority for operators running agents/i })).toBeVisible();
   await expect(page.getByText(/generic password manager/i)).toHaveCount(0);
 });
 
@@ -102,4 +103,26 @@ test("account paths bridge to Bitter account surfaces", async ({ page }) => {
     "href",
     "https://bitter.sh/signup",
   );
+});
+
+test("public crawler and markdown routes mirror the product boundary", async ({ page }) => {
+  let response = await page.goto("/llms.txt");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("body")).toContainText("Marketing surface only");
+  await expect(page.locator("body")).toContainText("app.bitterpass.com");
+
+  response = await page.goto("/llms-full.txt");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("body")).toContainText("Claim Ledger");
+  await expect(page.locator("body")).toContainText("CTA Truth");
+
+  response = await page.goto("/index.md");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("body")).toContainText("operator-approved credential authority");
+  await expect(page.locator("body")).toContainText("custody boundary");
+
+  response = await page.goto("/cli-setup.md");
+  expect(response?.status()).toBe(200);
+  await expect(page.locator("body")).toContainText("invitation-gated");
+  await expect(page.locator("body")).toContainText("runner identity");
 });

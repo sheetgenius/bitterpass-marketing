@@ -1,0 +1,86 @@
+# BitterPass Public Context
+
+## Product Sentence
+
+BitterPass is an operator-approved credential authority for teams whose agents
+touch production APIs, cloud consoles, billing systems, and internal control
+planes.
+
+## User And Job
+
+The user is an operator, platform owner, security-minded founder, or technical
+team whose agents and MCP tools need to touch real systems without inheriting a
+human's broad credentials or one immortal service account.
+
+The job is to keep a human approval step while letting a runner receive scoped
+material for a bounded run, then leave receipts that can be reviewed later.
+
+## Object Loop
+
+```text
+Operator -> Passkey Session -> Runner Identity -> Scoped Bundle -> Receipts -> Expiry/Revocation
+```
+
+## Bitter Role
+
+Bitter is the agent-operable software environment. BitterPass owns the
+credential-authority part of that environment. Factory, BitterGrid, BitterHub,
+and marketing surfaces can link to BitterPass receipts, but they do not become
+the authority for issuance, expiry, revocation, or audit state.
+
+## Boundary And Not-X
+
+BitterPass is not a generic password manager, deployment executor,
+account/billing layer, public recovery runbook, or marketing-site login system.
+The public marketing repository does not contain passkey ceremony payloads,
+vault unlock logic, credential values, pairing tokens, recovery material,
+approved-customer onboarding packets, or private support/debug material.
+
+## Live Proof
+
+The public marketing root is `https://bitterpass.com/`. The CLI setup overview
+is `https://bitterpass.com/cli-setup/`. The release identity path is
+`https://bitterpass.com/up/`. The console surface is
+`https://app.bitterpass.com/`. Access requests and support start at
+`https://bitterdesk.com/`.
+
+## Claim Ledger
+
+- Live-proven: public marketing routes, health/release identity, console route,
+  BitterDesk route, Bitter account bridge routes, private-launch request CTA.
+- Source-proven: static Nuxt marketing site, Radicchio manifest, ops manifest,
+  public smoke tests, Markdown alternates, AI-readable discovery files, and
+  marketing-only repository boundary.
+- Private: passkey ceremony details, vault unlock behavior, credential values,
+  runner bundle issuance, root-secret custody, recovery material, and
+  customer-specific onboarding packets.
+- Future or remove: zero-knowledge, no-service-plaintext,
+  no-vendor-root-secret, and recovery guarantees unless backed by an approved
+  proof packet that is intentionally public.
+
+## CTA Truth
+
+Request access through BitterDesk. Invited users open BitterPass Console.
+Login and signup bridge through Bitter account surfaces. Detailed CLI commands,
+pairing steps, runner enrollment, and recovery material are invitation-gated.
+
+## Current Public Copy
+
+BitterPass is for teams whose agents and MCP tools touch production APIs, cloud
+consoles, billing systems, and internal control planes. It replaces broad
+service accounts, copied environment variables, and unauditable bot access with
+human approval, per-run scope, revocation, and receipts.
+
+The product contract is a bounded onboarding proof: operator approval, runner
+identity, scoped material, and receipts before the first production pull.
+
+## Public Routes
+
+- Home: https://bitterpass.com/
+- Home Markdown: https://bitterpass.com/index.md
+- CLI setup overview: https://bitterpass.com/cli-setup/
+- CLI setup Markdown: https://bitterpass.com/cli-setup.md
+- Health and release identity: https://bitterpass.com/up/
+- Sitemap: https://bitterpass.com/sitemap.xml
+- Robots: https://bitterpass.com/robots.txt
+- AI index: https://bitterpass.com/llms.txt

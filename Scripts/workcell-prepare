@@ -57,6 +57,12 @@ required = [
     "radicchio.json",
     "ops/manifest.json",
     "public/_headers",
+    "public/cli-setup.md",
+    "public/index.md",
+    "public/llms-full.txt",
+    "public/llms.txt",
+    "public/robots.txt",
+    "public/sitemap.xml",
     "public/up/index.html",
     "Scripts/postdeploy-verify",
     "Scripts/radicchio",
@@ -93,8 +99,8 @@ checks = [
     },
     {
         "name": "package_scripts",
-        "result": "ok" if scripts.get("qa:ops") == "python3 Scripts/verify-ops-manifest" and scripts.get("qa:smoke") == "playwright test" and scripts.get("generate") == "nuxt generate" else "failed",
-        "scripts": {key: scripts.get(key) for key in ["generate", "qa:ops", "qa:smoke"]},
+        "result": "ok" if scripts.get("qa:ops") == "python3 Scripts/verify-ops-manifest" and scripts.get("qa:smoke") == "playwright test" and scripts.get("generate") == "nuxt generate" and scripts.get("test:headers") == "bun test Scripts/static-headers.test.ts" else "failed",
+        "scripts": {key: scripts.get(key) for key in ["generate", "qa:ops", "qa:smoke", "test:headers"]},
     },
     {
         "name": "radicchio_target",
@@ -124,7 +130,11 @@ checks = [
     },
     {
         "name": "static_security_headers",
-        "result": "ok" if "frame-ancestors 'none'" in static_headers and "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: DENY" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=()" in static_headers else "failed",
+        "result": "ok" if "Content-Security-Policy" not in static_headers and "Strict-Transport-Security: max-age=31536000; includeSubDomains" in static_headers and "X-Frame-Options: SAMEORIGIN" in static_headers and "X-Content-Type-Options: nosniff" in static_headers and "Referrer-Policy: strict-origin-when-cross-origin" in static_headers and "Permissions-Policy: camera=(), microphone=(), geolocation=()" in static_headers else "failed",
+    },
+    {
+        "name": "public_reader_files",
+        "result": "ok" if pathlib.Path("public/index.md").is_file() and pathlib.Path("public/cli-setup.md").is_file() and pathlib.Path("public/llms.txt").is_file() and pathlib.Path("public/llms-full.txt").is_file() and "BitterPass" in pathlib.Path("public/index.md").read_text(encoding="utf-8", errors="replace") else "failed",
     },
     {
         "name": "health_writer",

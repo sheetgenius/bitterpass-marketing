@@ -11,7 +11,8 @@
     "preview": "nuxt preview",
     "qa:ops": "python3 Scripts/verify-ops-manifest",
     "postinstall": "nuxt prepare",
-    "qa:smoke": "playwright test"
+    "qa:smoke": "playwright test",
+    "test:headers": "bun test Scripts/static-headers.test.ts"
   },
   "dependencies": {
     "nuxt": "4.4.6",

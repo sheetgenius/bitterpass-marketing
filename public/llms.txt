@@ -1,0 +1,36 @@
+# BitterPass
+
+Marketing surface only. BitterPass public context lives at `bitterpass.com`;
+the product console lives at `app.bitterpass.com`; access requests and support
+start at `bitterdesk.com`.
+
+## Product Sentence
+
+BitterPass is an operator-approved credential authority for teams whose agents
+touch production APIs, cloud consoles, billing systems, and internal control
+planes.
+
+## Public Routes
+
+- HTML home: https://bitterpass.com/
+- Markdown home: https://bitterpass.com/index.md
+- CLI setup overview: https://bitterpass.com/cli-setup/
+- Markdown CLI setup overview: https://bitterpass.com/cli-setup.md
+- Health and release identity: https://bitterpass.com/up/
+- Sitemap: https://bitterpass.com/sitemap.xml
+- Full AI-readable context: https://bitterpass.com/llms-full.txt
+
+## Current CTA Truth
+
+- Request access through BitterDesk: https://bitterdesk.com/
+- Invited users open BitterPass Console: https://app.bitterpass.com/
+- Login and signup bridge through Bitter account surfaces.
+- Detailed CLI commands, pairing steps, recovery material, and
+  customer-specific onboarding are invitation-gated.
+
+## Public Claim Boundary
+
+Public copy may describe sealed state, metadata, operator approval, scoped
+runner access, revocation, and receipts. Do not infer public proof of
+zero-knowledge behavior, no-service-plaintext custody, no-vendor-root custody,
+or recovery guarantees from this marketing repository alone.

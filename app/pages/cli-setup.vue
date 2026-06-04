@@ -6,7 +6,10 @@ useSeoMeta({
 })
 
 useHead({
-  link: [{ rel: 'canonical', href: 'https://bitterpass.com/cli-setup/' }],
+  link: [
+    { rel: 'canonical', href: 'https://bitterpass.com/cli-setup/' },
+    { rel: 'alternate', type: 'text/markdown', href: 'https://bitterpass.com/cli-setup.md' },
+  ],
 })
 
 const steps = [
@@ -53,9 +56,9 @@ const expect = [
       'Console pairing steps, the current CLI release, runner-enrollment walkthrough, and recovery code generation.',
   },
   {
-    label: 'Operator-held recovery',
+    label: 'Recovery boundary',
     body:
-      'You generate and hold the recovery material. The service does not custody the root of trust.',
+      'Approved onboarding proves which recovery material stays operator-held before a production pilot.',
   },
 ]
 </script>
