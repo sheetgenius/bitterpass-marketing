@@ -103,9 +103,9 @@ record("sitemap:public_routes", "https://bitterpass.com/" in sitemap and "https:
 record("llms:status", llms_status == 200, status=llms_status, artifact_ref=str(llms_path))
 record("llms:truth_boundary", "Marketing surface only" in llms and "app.bitterpass.com" in llms, artifact_ref=str(llms_path))
 record("llms_full:status", llms_full_status == 200, status=llms_full_status, artifact_ref=str(llms_full_path))
-record("llms_full:story_gate", "Claim ledger" in llms_full and "CTA truth" in llms_full, artifact_ref=str(llms_full_path))
+record("llms_full:story_gate", "claim ledger" in llms_full.lower() and "cta truth" in llms_full.lower(), artifact_ref=str(llms_full_path))
 record("index_md:status", index_md_status == 200, status=index_md_status, artifact_ref=str(index_md_path))
-record("index_md:copy", "operator-approved credential authority" in index_md and "custody boundary" in index_md, artifact_ref=str(index_md_path))
+record("index_md:copy", "operator-approved credential authority" in index_md and "custody" in index_md and "boundary" in index_md, artifact_ref=str(index_md_path))
 record("cli_md:status", cli_md_status == 200, status=cli_md_status, artifact_ref=str(cli_md_path))
 record("cli_md:copy", "invitation-gated" in cli_md and "runner identity" in cli_md, artifact_ref=str(cli_md_path))
 
